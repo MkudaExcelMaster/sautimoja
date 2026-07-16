@@ -1,0 +1,489 @@
+/* ==========================================================================
+   RESET & SYSTEM BASE
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #f4f7fb;
+    color: #1e293b;
+    padding: 20px;
+    line-height: 1.5;
+}
+
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+.main-header {
+    background: linear-gradient(135deg, #4338ca, #2563eb, #059669);
+    color: white;
+    padding: 30px 25px;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.main-header h1 {
+    font-size: 34px;
+    margin-bottom: 8px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    font-size: 16px;
+    opacity: 0.95;
+    font-weight: 400;
+}
+
+/* ==========================================================================
+   ACTION BUTTONS
+   ========================================================================== */
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.action-buttons button {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 20px;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Rangi maalum kwa utaratibu wa button zako kwenye HTML */
+.action-buttons button:nth-of-type(1) { background: #16a34a; } /* Save */
+.action-buttons button:nth-of-type(2) { background: #2563eb; } /* Print */
+.action-buttons button:nth-of-type(3) { background: #9333ea; } /* Refresh */
+.action-buttons button:nth-of-type(4) { background: #4f46e5; } /* Backup */
+.action-buttons button:nth-of-type(5) { background: #0ea5e9; } /* Restore */
+.action-buttons button:nth-of-type(6) { background: #059669; } /* Export Excel */
+
+.action-buttons button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* ==========================================================================
+   SEARCH AREA
+   ========================================================================== */
+.search-area {
+    margin-bottom: 25px;
+}
+
+#searchMember {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    font-size: 15px;
+    background: white;
+    color: #1e293b;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+#searchMember:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.15);
+}
+
+/* ==========================================================================
+   GROUP DASHBOARD (MOCKUP YA CASH FLOW YA JUU)
+   ========================================================================== */
+.group-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-2px);
+}
+
+.dashboard-card h3 {
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dashboard-card p {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1d4ed8;
+}
+
+.dashboard-card.warning p {
+    color: #ea580c;
+}
+
+.dashboard-card.danger p {
+    color: #dc2626;
+}
+
+/* ==========================================================================
+   MEMBERS CONTAINER & CARD
+   ========================================================================== */
+#membersContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.member-card {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* ==========================================================================
+   MEMBER HEADER (PANELI YA MAELEZO BINAFSI)
+   ========================================================================== */
+.member-header {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+/* PHOTO */
+.member-photo {
+    width: 130px;
+    height: 130px;
+    min-width: 130px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #cbd5e1;
+    background: #f8fafc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.member-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* INFO - MPANGILIO WA VITU 4 VIPYA */
+.member-info {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.member-info h2 {
+    grid-column: 1 / -1;
+    background: #2563eb;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.member-info input,
+.member-info select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #334155;
+    background: #fff;
+    outline: none;
+    transition: all 0.15s ease;
+}
+
+.member-info input:focus,
+.member-info select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.member-info input::placeholder {
+    color: #94a3b8;
+}
+
+/* ==========================================================================
+   MEMBER RESULTS (MATOKEO YA JUMLA KUU)
+   ========================================================================== */
+.member-results {
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.member-results h3 {
+    margin-bottom: 15px;
+    color: #1e3a8a;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.result-item {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.result-item span {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.result-item strong {
+    color: #1e293b;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* Rangi maalum kwa madeni kwenye kadi binafsi */
+.result-item:has(.resultDebtShares) strong,
+.result-item:has(.resultDebtCommunity) strong,
+.result-item:has(.resultDebt) strong {
+    color: #dc2626;
+}
+
+/* ==========================================================================
+   INPUT GRID (FOMU YA LEO YA KILA KADI)
+   ========================================================================== */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.grid div {
+    display: flex;
+    flex-direction: column;
+}
+
+.grid label {
+    margin-bottom: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.grid input {
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    transition: all 0.15s ease;
+}
+
+.grid input:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.grid input:disabled {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+    border-color: #e2e8f0;
+}
+
+/* ==========================================================================
+   RESPONSIVE LAYOUTS (MOBILE SMARTPHONE)
+   ========================================================================== */
+@media (max-width: 900px) {
+    .member-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .member-photo {
+        margin-bottom: 5px;
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    .group-dashboard {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .main-header h1 {
+        font-size: 22px;
+    }
+
+    .results-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ==========================================================================
+   PRINT SYSTEM
+   ========================================================================== */
+@media print {
+    .action-buttons,
+    .search-area,
+    .member-photo-input,
+    .save-member {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .member-card {
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #cbd5e1;
+        margin-bottom: 30px;
+        padding: 15px;
+    }
+    
+    .member-info input, 
+    .member-info select,
+    .grid input {
+        border: none !important;
+        background: transparent !important;
+        padding: 2px 0 !important;
+    }
+}
+/* ==========================================================================
+   STYLE YA LOGIN SCREEN
+   ========================================================================== */
+.login-container {
+    display: none; /* Inadhibitiwa na JS */
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.login-box {
+    background: white;
+    padding: 35px 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-box h2 {
+    color: #1e3a8a;
+    font-size: 26px;
+    margin-bottom: 5px;
+}
+
+.login-box p {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    text-align: left;
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+    border-color: #2563eb;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 14px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 10px;
+}
+
+.login-btn:hover {
+    background: #1d4ed8;
+}
