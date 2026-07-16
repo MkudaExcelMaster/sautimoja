@@ -2,7 +2,8 @@
 const SUPABASE_URL = "https://nkdvoqbbzgjdkvvccbej.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable__6o1FK6fIdXD9st9G8QJ9w_ZLqH6lxC";
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Kutumia jina tofauti kidogo ili kuzuia mgongano wa majina (naming conflict)
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // === Vigezo vya Mtumiaji ===
 let currentUserRole = "mwanachama";
@@ -104,7 +105,7 @@ async function showMainPage() {
 // Pakia data zote za Wanachama
 async function fetchMembersFromDatabase() {
     try {
-        const { data, error } = await supabase
+        const { data, error } = await db
             .from('members')
             .select('*')
             .order('id', { ascending: true });
@@ -146,14 +147,14 @@ async function saveMember(e) {
 
         try {
             // Upload kwenye Supabase Storage Bucket
-            const { error: uploadError } = await supabase.storage
+            const { error: uploadError } = await db.storage
                 .from('member-photos')
                 .upload(filePath, file);
 
             if (uploadError) throw uploadError;
 
             // Pata Link ya Picha
-            const { data } = supabase.storage
+            const { data } = db.storage
                 .from('member-photos')
                 .getPublicUrl(filePath);
 
@@ -166,7 +167,7 @@ async function saveMember(e) {
         }
     }
 
-    // Tayarisha Data za Kuokoa
+    // Unakabili data za kuhifadhi
     const memberData = {
         id, name, phone, gender, guardian,
         dob: dob || null,
@@ -182,7 +183,7 @@ async function saveMember(e) {
 
         if (isEditing) {
             // Edit
-            const { error } = await supabase
+            const { error } = await db
                 .from('members')
                 .update(memberData)
                 .eq('id', id);
@@ -199,7 +200,7 @@ async function saveMember(e) {
                 return;
             }
 
-            const { error } = await supabase
+            const { error } = await db
                 .from('members')
                 .insert([memberData]);
 
@@ -235,7 +236,7 @@ async function saveDailyData(e) {
     const jamii_inayolipwa_leo = parseFloat(document.getElementById("d_jamii_lipwa").value) || 0;
 
     try {
-        const { error } = await supabase
+        const { error } = await db
             .from('members')
             .update({
                 hisa_leo, afya_leo, jamii_leo,
