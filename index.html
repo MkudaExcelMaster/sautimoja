@@ -4,313 +4,391 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SAUTI MOJA VIJANA GROUP HOLILI</title>
-    <!-- CSS Bootstrap -->
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- MAKTABA ZA EXCEL (SheetJS & ExcelJS) -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
-
+    <!-- FontAwesome ya Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #1e3d59;
+            --secondary-color: #17b978;
+            --accent-color: #ff6f3c;
+            --bg-light: #f5f5f5;
+        }
         body {
-            background-color: #f4f6f9;
+            background-color: var(--bg-light);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .header-title {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+        .login-container {
+            max-width: 450px;
+            margin: 80px auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .header-banner {
+            background: linear-gradient(135deg, var(--primary-color), #112233);
             color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
+            padding: 30px 20px;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 30px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .member-card {
             background: white;
-            border-radius: 15px;
-            border: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             margin-bottom: 25px;
-            padding: 20px;
-            overflow: hidden;
+            border: 1px solid #eef2f5;
+            transition: transform 0.2s;
         }
         .member-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
         }
-        .member-header {
+        .card-header-custom {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eef2f5;
+            padding: 12px 20px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
             display: flex;
-            gap: 20px;
+            justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
+            font-weight: 600;
+            color: var(--primary-color);
         }
         .member-photo {
-            flex-shrink: 0;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid var(--secondary-color);
+            margin: 15px auto;
+            display: block;
         }
-        .member-info {
-            flex-grow: 1;
-        }
-        .member-info input, .member-info select {
-            width: 100%;
-            padding: 6px 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-        .member-results {
-            background: #f8fafc;
-            border-radius: 8px;
-            padding: 15px;
-            border: 1px solid #e2e8f0;
-        }
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .result-item {
-            background: white;
-            padding: 10px;
+        .summary-badge {
+            background: #f1f6f9;
+            padding: 8px 12px;
             border-radius: 6px;
-            border: 1px solid #e2e8f0;
-            text-align: center;
-        }
-        .result-item span {
-            display: block;
-            font-size: 0.75rem;
-            color: #64748b;
-            text-transform: uppercase;
-        }
-        .result-item strong {
-            display: block;
-            font-size: 1rem;
-            color: #1e293b;
-            margin-top: 2px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-        .grid div {
+            margin-bottom: 6px;
+            font-size: 0.9rem;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
         }
-        .grid label {
-            font-size: 0.75rem;
-            color: #475569;
-            margin-bottom: 4px;
-            font-weight: 500;
+        .summary-badge span {
+            font-weight: 600;
+            color: #2b3a4a;
         }
-        .grid input {
-            padding: 6px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 0.85rem;
-        }
-        .dashboard-stats {
+        .dashboard-box {
             background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        .stat-box {
-            text-align: center;
-            padding: 15px;
             border-radius: 10px;
-            color: white;
-            margin-bottom: 15px;
-        }
-        .stat-hisa { background: #2ecc71; }
-        .stat-afya { background: #3498db; }
-        .stat-jamii { background: #9b59b6; }
-        .stat-faini { background: #e74c3c; }
-        .stat-mkopo { background: #f39c12; }
-        .stat-lipwa { background: #1abc9c; }
-        .stat-baki { background: #34495e; }
-        .stat-madeni { background: #c0392b; }
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .watermark {
+            padding: 20px;
             text-align: center;
-            font-size: 0.8rem;
-            color: #aaa;
-            margin-top: 50px;
-            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            border-left: 4px solid var(--primary-color);
         }
-        @media (max-width: 768px) {
-            .results-grid, .grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .member-header {
-                flex-direction: column;
-                text-align: center;
-            }
+        .dashboard-box.accent { border-left-color: var(--accent-color); }
+        .dashboard-box.success { border-left-color: var(--secondary-color); }
+        
+        @media print {
+            .no-print, .btn, .modal, .navbar, .badge, #adminPanel { display: none !important; }
+            .card { border: none !important; box-shadow: none !important; }
+            body { background: white; }
         }
     </style>
 </head>
 <body>
 
-    <!-- UKURASA WA LOGIN (Maboresho ya id ili kuendana na JS) -->
-    <div id="loginSection" class="container">
+    <!-- ================= PAGE 1: LOGIN ================= -->
+    <div id="loginPage" class="container">
         <div class="login-container text-center">
-            <h3 class="mb-4 text-primary"><i class="fa-solid fa-users-gear"></i> SAUTI MOJA</h3>
-            <p class="text-muted">Ingiza Taarifa za Kuingia kwenye Mfumo</p>
-            <form onsubmit="login(event)">
-                <div class="mb-3 text-start">
-                    <label class="form-label">Namba ya Mwanachama au 'katibu'</label>
-                    <input type="text" id="usernameInput" class="form-control" placeholder="Mfano: 001 au katibu" required>
-                </div>
-                <div class="mb-4 text-start">
-                    <label class="form-label">Neno la Siri (Namba ya Simu / Password)</label>
-                    <input type="password" id="passwordInput" class="form-control" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100 btn-custom" style="border-radius: 30px; padding: 10px 20px; font-weight: 600;">Ingia Kwenye Mfumo</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- UKURASA MKUU WA MFUMO -->
-    <div id="mainContent" class="container py-4" style="display: none;">
-        <div class="header-title text-center position-relative">
-            <h2>SAUTI MOJA VIJANA GROUP HOLILI</h2>
-            <p class="mb-0">Mfumo wa Kidijitali wa Kusimamia Hisa na Mikopo</p>
-            <button onclick="logout()" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-3"><i class="fa-solid fa-right-from-bracket"></i> Ondoka</button>
-        </div>
-
-        <!-- DASHBOARD YA JUMLA KUU -->
-        <div class="dashboard-stats">
-            <h4 class="mb-4 text-secondary text-center"><i class="fa-solid fa-chart-line"></i> Muhtasari wa Jumla ya Kikundi</h4>
-            <div class="row">
-                <div class="col-md-3 col-6">
-                    <div class="stat-box stat-hisa">
-                        <h6>JUMLA YA HISA</h6>
-                        <h4 id="totalShares">0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-box stat-afya">
-                        <h6>JUMLA YA AFYA</h6>
-                        <h4 id="totalHealth">0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-box stat-jamii">
-                        <h6>JUMLA YA JAMII</h6>
-                        <h4 id="totalCommunity">0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-box stat-faini">
-                        <h6>JUMLA YA FAINI</h6>
-                        <h4 id="totalFines">0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-box stat-mkopo">
-                        <h6>JUMLA MKOPO HISA</h6>
-                        <h4 id="totalLoanShares">0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-box stat-lipwa">
-                        <h6>HISA LIPWA</h6>
-                        <h4 id="totalSharesPaid">0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-box stat-baki">
-                        <h6>BAKI MKOPO HISA</h6>
-                        <h4 id="totalSharesBalance">0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-box stat-mkopo">
-                        <h6>JUMLA MKOPO JAMII</h6>
-                        <h4 id="totalLoanCommunity">0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-box stat-lipwa">
-                        <h6>JAMII LIPWA</h6>
-                        <h4 id="totalCommunityPaid">0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-box stat-baki">
-                        <h6>BAKI MKOPO JAMII</h6>
-                        <h4 id="totalCommunityBalance">0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-box stat-mkopo">
-                        <h6>JUMLA YA MIKOPO</h6>
-                        <h4 id="totalLoans">0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-box stat-lipwa">
-                        <h6>JUMLA ILIYOLIPWA</h6>
-                        <h4 id="totalPaidLoans">0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 mx-auto">
-                    <div class="stat-box stat-madeni">
-                        <h6>JUMLA YA MADENI</h6>
-                        <h4 id="totalDebt">0</h4>
-                    </div>
-                </div>
+            <div class="mb-4">
+                <i class="fa-solid fa-users-gear fa-3x text-primary"></i>
+            </div>
+            <h3 class="fw-bold text-dark mb-1">SAUTI MOJA</h3>
+            <p class="text-muted mb-4">Ingiza Taarifa za Kuingia kwenye Mfumo</p>
+            
+            <div class="text-start mb-3">
+                <label class="form-label fw-semibold">Namba ya Mwanachama au Role</label>
+                <select id="userRole" class="form-select form-select-lg">
+                    <option value="mwanachama">Mwanachama (Kuangalia Data Tu)</option>
+                    <option value="katibu">Katibu (Usimamizi/Admin)</option>
+                </select>
             </div>
             
-            <!-- PANEL YA KATIBU -->
-            <div class="text-center mt-3 backup-restore-section">
-                <button onclick="saveAllData()" class="btn btn-success btn-custom me-2 admin-only"><i class="fa-solid fa-floppy-disk"></i> Funga Data Zote za Leo</button>
-                <button onclick="exportExcel()" class="btn btn-primary btn-custom me-2"><i class="fa-solid fa-file-excel"></i> Export Excel</button>
-                <button onclick="backupData()" class="btn btn-warning btn-custom me-2 admin-only"><i class="fa-solid fa-download"></i> Backup Data</button>
-                <label class="btn btn-info btn-custom mb-0 admin-only" style="cursor:pointer;">
-                    <i class="fa-solid fa-upload"></i> Restore Backup
-                    <input type="file" onchange="restoreData(event)" accept=".json" style="display:none;">
-                </label>
+            <div class="text-start mb-4" id="passwordField" style="display: none;">
+                <label class="form-label fw-semibold">Neno la Siri (Password)</label>
+                <input type="password" id="loginPassword" class="form-control form-control-lg" placeholder="Weka password ya Katibu">
+            </div>
+            
+            <div id="loginError" class="alert alert-danger p-2 mb-3" style="display: none; font-size: 0.9rem;">
+                <i class="fa-solid fa-triangle-exclamation"></i> Neno la siri si sahihi! Jaribu tena.
+            </div>
+            
+            <button id="btnLogin" class="btn btn-primary btn-lg w-100 fw-bold">Ingia Kwenye Mfumo</button>
+            
+            <div class="mt-5 text-muted" style="font-size: 0.8rem;">
+                SAUTI MOJA VIJANA GROUP HOLILI © 2026 | Mfumo Umeunganishwa na Supabase Cloud Database
             </div>
         </div>
+    </div>
 
-        <!-- SEHEMU YA UTAFUTAJI -->
-        <div class="row mb-4">
-            <div class="col-md-6 mx-auto">
-                <div class="input-group">
-                    <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass"></i></span>
-                    <input type="text" id="searchMember" oninput="searchMember()" class="form-control border-start-0" placeholder="Tafuta mwanakikundi kwa jina au namba...">
+    <!-- ================= PAGE 2: MAIN DASHBOARD ================= -->
+    <div id="mainPage" style="display: none;">
+        <!-- Banner la Juu -->
+        <div class="header-banner text-center position-relative">
+            <span id="roleBadge" class="badge position-absolute top-0 end-0 m-3 p-2"></span>
+            <h2 class="fw-bold m-0 text-uppercase tracking-wide"><i class="fa-solid fa-layer-group"></i> SAUTI MOJA VIJANA GROUP HOLILI</h2>
+            <p class="mb-0 mt-2 opacity-75">Mfumo Rasmi wa Usimamizi wa Fedha, Hisa na Mikopo Mtandaoni</p>
+            <button id="btnLogout" class="btn btn-sm btn-outline-light position-absolute bottom-0 end-0 m-3 no-print">
+                <i class="fa-solid fa-right-from-bracket"></i> Ondoka (Logout)
+            </button>
+        </div>
+
+        <div class="container-fluid px-4 mb-5">
+            <!-- SEHEMU YA USIMAMIZI (ADMIN PANEL) - INAONEKANA KWA KATIBU TU -->
+            <div id="adminPanel" class="card p-3 mb-4 no-print bg-white" style="display: none;">
+                <h5 class="fw-bold text-danger border-bottom pb-2 mb-3"><i class="fa-solid fa-screwdriver-wrench"></i> Panel ya Katibu (Usimamizi)</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <button id="btnAddNew" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#memberModal">
+                        <i class="fa-solid fa-user-plus"></i> Sajili Mwanachama Mpya
+                    </button>
+                    <button id="btnExport" class="btn btn-outline-dark">
+                        <i class="fa-solid fa-file-excel"></i> Pakua Excel (Data Zote)
+                    </button>
+                    <button id="btnPrint" class="btn btn-outline-secondary">
+                        <i class="fa-solid fa-print"></i> Chapisha (Print / Save PDF)
+                    </button>
                 </div>
             </div>
-        </div>
 
-        <!-- ENNEO LA KADI ZA WANACHAMA -->
-        <div class="row" id="membersContainer">
-            <!-- Kadi zitajazwa hapa na JS -->
+            <!-- DASHBOARD YA JUMLA YA KIKUNDI -->
+            <h4 class="fw-bold text-dark mb-3"><i class="fa-solid fa-chart-pie"></i> Hali ya Kikundi Kwa Ujumla</h4>
+            <div class="row g-3 mb-5">
+                <div class="col-6 col-sm-6 col-md-3">
+                    <div class="dashboard-box">
+                        <small class="text-muted uppercase d-block fw-semibold">Jumla ya Hisa</small>
+                        <h4 class="fw-bold mt-1 text-primary" id="totalHisa">0 TSh</h4>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3">
+                    <div class="dashboard-box success">
+                        <small class="text-muted uppercase d-block fw-semibold">Jumla ya Afya</small>
+                        <h4 class="fw-bold mt-1 text-success" id="totalAfya">0 TSh</h4>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3">
+                    <div class="dashboard-box">
+                        <small class="text-muted uppercase d-block fw-semibold">Jumla ya Jamii</small>
+                        <h4 class="fw-bold mt-1 text-info" id="totalJamii">0 TSh</h4>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3">
+                    <div class="dashboard-box accent">
+                        <small class="text-muted uppercase d-block fw-semibold">Jumla ya Faini</small>
+                        <h4 class="fw-bold mt-1 text-danger" id="totalFaini">0 TSh</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- JUMUIYA YA MIKOPO NA MADENI -->
+            <div class="card p-3 mb-5 bg-light border-0 shadow-sm">
+                <h6 class="fw-bold text-secondary mb-3"><i class="fa-solid fa-building-columns"></i> MCHANGANUO WA MIKOPO YA KIKUNDI</h6>
+                <div class="row g-3 text-center">
+                    <div class="col-md-4">
+                        <div class="p-2 border-end border-2">
+                            <small class="text-muted d-block">Jumla Kuu ya Mikopo Iliyotolewa</small>
+                            <span class="fs-5 fw-bold text-dark" id="grandTotalMkopo">0 TSh</span>
+                            <div class="mt-1" style="font-size:0.75rem;">
+                                M. Hisa: <span id="totalMkopoHisa">0</span> | M. Jamii: <span id="totalMkopoJamii">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-2 border-end border-2">
+                            <small class="text-muted d-block">Jumla ya Fedha Zilizorejeshwa</small>
+                            <span class="fs-5 fw-bold text-success" id="grandTotalLipwa">0 TSh</span>
+                            <div class="mt-1" style="font-size:0.75rem;">
+                                Rejesho Hisa: <span id="totalHisaLipwa">0</span> | Rejesho Jamii: <span id="totalJamiiLipwa">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-2">
+                            <small class="text-muted d-block">Jumla ya Deni Linalodaiwa Nje</small>
+                            <span class="fs-5 fw-bold text-danger" id="grandTotalDeni">0 TSh</span>
+                            <div class="mt-1" style="font-size:0.75rem;">
+                                Kiporo Hisa: <span id="totalBakiHisa">0</span> | Kiporo Jamii: <span id="totalBakiJamii">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEHEMU YA UTAFUTAJI (SEARCH) -->
+            <div class="row mb-4 no-print align-items-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                        <input type="text" id="searchInput" class="form-control form-control-lg border-start-0" placeholder="Tafuta kwa Jina au Namba ya ID...">
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-8 text-md-end mt-2 mt-md-0 text-muted">
+                    <small>* Wanachama wamepangwa kwa mfuatano wa Namba zao za ID.</small>
+                </div>
+            </div>
+
+            <!-- SEHEMU INAYOWEKA KADI ZA WANACHAMA (DYNAMIC) -->
+            <div class="row" id="membersList">
+                <!-- Kadi zitajazwa hapa na script.js kiotomatiki -->
+            </div>
         </div>
     </div>
 
-    <div class="watermark">
-        SAUTI MOJA VIJANA GROUP HOLILI © 2026 | Mfumo wa Ndani ya LocalStorage
+
+    <!-- ================= MODALS (POP-UPS FOR ADMIN) ================= -->
+
+    <!-- MODAL 1: REGISTRATION / EDIT PROFILE -->
+    <div class="modal fade" id="memberModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="memberForm">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title fw-bold" id="modalTitle">Sajili Mwanachama Mpya</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="editMemberId">
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Namba ya Mwanachama (ID) <span class="text-danger">*</span></label>
+                            <input type="text" id="m_id" class="form-control" placeholder="Mfano: 001, 002" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Jina Kamili <span class="text-danger">*</span></label>
+                            <input type="text" id="m_name" class="form-control" placeholder="Weka Jina la Mwanachama" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Namba ya Simu</label>
+                            <input type="text" id="m_phone" class="form-control" placeholder="Mfano: 0712345678">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Jinsia</label>
+                                <select id="m_gender" class="form-select">
+                                    <option value="Mwanaume">Mwanaume</option>
+                                    <option value="Mwanamke">Mwanamke</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Tarehe ya Kuzaliwa</label>
+                                <input type="date" id="m_dob" class="form-control">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Jina la Mrithi (Guardian)</label>
+                            <input type="text" id="m_guardian" class="form-control" placeholder="Weka jina la mrithi">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Hisa Anzia (Kama anazo)</label>
+                            <input type="number" id="m_hisa_anz_val" class="form-control" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Picha ya Mwanachama (File)</label>
+                            <input type="file" id="m_photo_file" class="form-control" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Funga</button>
+                        <button type="submit" id="btnSaveMember" class="btn btn-primary fw-bold">Hifadhi Mwanachama</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
-    <!-- JS Bootstrap -->
+    <!-- MODAL 2: INGIZA DATA ZA LEO (FEDHA, MIKOPO, REJESHO) -->
+    <div class="modal fade" id="dataModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="dataForm">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title fw-bold"><i class="fa-solid fa-cash-register"></i> Karatasi ya Mahudhurio na Mapato ya Leo</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="dataMemberId">
+                        
+                        <div class="row">
+                            <!-- SAFU YA KWANZA: MAPATO YA KAWAIDA -->
+                            <div class="col-md-6 border-end">
+                                <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">Mapato ya Leo</h6>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Hisa ya Leo (TSh)</label>
+                                    <input type="number" id="d_hisa" class="form-control" value="0">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Mfuko wa Afya (TSh)</label>
+                                    <input type="number" id="d_afya" class="form-control" value="0">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Mfuko wa Jamii (TSh)</label>
+                                    <input type="number" id="d_jamii" class="form-control" value="0">
+                                </div>
+                                <h6 class="fw-bold text-danger border-bottom pb-2 mt-4 mb-3">Faini</h6>
+                                <div class="mb-2">
+                                    <label class="form-label" style="font-size:0.85rem;">Faini ya Kuchelewa (TSh)</label>
+                                    <input type="number" id="d_faini1" class="form-control form-control-sm" value="0">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label" style="font-size:0.85rem;">Faini ya Kutohudhuria (TSh)</label>
+                                    <input type="number" id="d_faini2" class="form-control form-control-sm" value="0">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label" style="font-size:0.85rem;">Faini Nyinginezo (TSh)</label>
+                                    <input type="number" id="d_faini3" class="form-control form-control-sm" value="0">
+                                </div>
+                            </div>
+                            
+                            <!-- SAFU YA PILI: MIKOPO NA MAREJESHO -->
+                            <div class="col-md-6">
+                                <h6 class="fw-bold text-warning border-bottom pb-2 mb-3">Usimamizi wa Mikopo</h6>
+                                <div class="p-2 bg-light rounded mb-3">
+                                    <label class="form-label fw-semibold text-dark">Kichwa cha Mkopo wa HISA (TSh)</label>
+                                    <input type="number" id="d_mkopo_hisa" class="form-control mb-2" placeholder="Kiasi alichokopa leo" value="0">
+                                    <label class="form-label text-success font-weight-bold" style="font-size:0.85rem;">Rejesho la Mkopo wa Hisa la Leo (TSh)</label>
+                                    <input type="number" id="d_hisa_lipwa" class="form-control" placeholder="Kiasi alichorudisha leo" value="0">
+                                </div>
+                                
+                                <div class="p-2 bg-light rounded">
+                                    <label class="form-label fw-semibold text-dark">Kichwa cha Mkopo wa JAMII (TSh)</label>
+                                    <input type="number" id="d_mkopo_jamii" class="form-control mb-2" placeholder="Kiasi alichokopa leo" value="0">
+                                    <label class="form-label text-success font-weight-bold" style="font-size:0.85rem;">Rejesho la Mkopo wa Jamii la Leo (TSh)</label>
+                                    <input type="number" id="d_jamii_lipwa" class="form-control" placeholder="Kiasi alichorudisha leo" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Funga</button>
+                        <button type="submit" class="btn btn-success fw-bold">Hifadhi Taarifa za Leo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= JAVASCRIPT LIBRARIES ================= -->
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Bootstrap 5 Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SheetJS Library (Kuexport kwenda Excel) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     
-    <!-- LINK YA JAVASCRIPT YAKO (Hakikisha jina la faili ni app.js au badilisha hapa kuwa sahihi) -->
-    <script src="app.js"></script>
+    <!-- Faili Lako la Logic -->
+    <script src="script.js"></script>
 </body>
 </html>
