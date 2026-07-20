@@ -21,33 +21,53 @@ function initApp() {
     const btnLogin = document.getElementById("btnLogin");
     const logoutBtn = document.getElementById("btnLogout");
 
-    userRoleSelect.addEventListener("change", () => {
-        if (userRoleSelect.value === "katibu") {
-            passwordField.style.display = "block";
-        } else {
-            passwordField.style.display = "none";
-        }
-    });
+    if (userRoleSelect) {
+        userRoleSelect.addEventListener("change", () => {
+            if (userRoleSelect.value === "katibu") {
+                passwordField.style.display = "block";
+            } else {
+                passwordField.style.display = "none";
+            }
+        });
+    }
 
-    btnLogin.addEventListener("click", performLogin);
-    logoutBtn.addEventListener("click", performLogout);
+    if (btnLogin) btnLogin.addEventListener("click", performLogin);
+    if (logoutBtn) logoutBtn.addEventListener("click", performLogout);
 
     // 2. Search function
-    document.getElementById("searchInput").addEventListener("input", filterMembers);
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) searchInput.addEventListener("input", filterMembers);
 
     // 3. Form submissions
-    document.getElementById("memberForm").addEventListener("submit", saveMember);
-    document.getElementById("dataForm").addEventListener("submit", saveDailyData);
+    const memberForm = document.getElementById("memberForm");
+    if (memberForm) memberForm.addEventListener("submit", saveMember);
+
+    const dataForm = document.getElementById("dataForm");
+    if (dataForm) dataForm.addEventListener("submit", saveDailyData);
 
     // Buttons za Admin
-    document.getElementById("btnPrint").addEventListener("click", () => window.print());
-    document.getElementById("btnExport").addEventListener("click", exportToExcel);
-    document.getElementById("btnAddNew").addEventListener("click", () => {
-        document.getElementById("memberForm").reset();
-        document.getElementById("editMemberId").value = "";
-        document.getElementById("m_id").disabled = false;
-        document.getElementById("modalTitle").innerText = "Sajili Mwanachama Mpya";
-    });
+    const btnPrint = document.getElementById("btnPrint");
+    if (btnPrint) btnPrint.addEventListener("click", () => window.print());
+
+    const btnExport = document.getElementById("btnExport");
+    if (btnExport) btnExport.addEventListener("click", exportToExcel);
+
+    const btnAddNew = document.getElementById("btnAddNew");
+    if (btnAddNew) {
+        btnAddNew.addEventListener("click", () => {
+            const form = document.getElementById("memberForm");
+            if (form) form.reset();
+            
+            const editId = document.getElementById("editMemberId");
+            if (editId) editId.value = "";
+            
+            const mId = document.getElementById("m_id");
+            if (mId) mId.disabled = false;
+            
+            const modalTitle = document.getElementById("modalTitle");
+            if (modalTitle) modalTitle.innerText = "Sajili Mwanachama Mpya";
+        });
+    }
 }
 
 // === LOGIN / LOGOUT ===
@@ -59,21 +79,23 @@ function performLogin() {
     if (role === "katibu") {
         if (password === "holili2026") {
             currentUserRole = "katibu";
-            errorMsg.style.display = "none";
+            if (errorMsg) errorMsg.style.display = "none";
             showMainPage();
         } else {
-            errorMsg.style.display = "block";
+            if (errorMsg) errorMsg.style.display = "block";
         }
     } else {
         currentUserRole = "mwanachama";
-        errorMsg.style.display = "none";
+        if (errorMsg) errorMsg.style.display = "none";
         showMainPage();
     }
 }
 
 function performLogout() {
     currentUserRole = "mwanachama";
-    document.getElementById("loginPassword").value = "";
+    const loginPassword = document.getElementById("loginPassword");
+    if (loginPassword) loginPassword.value = "";
+    
     document.getElementById("loginPage").style.display = "block";
     document.getElementById("mainPage").style.display = "none";
 }
@@ -87,13 +109,17 @@ async function showMainPage() {
     const adminPanel = document.getElementById("adminPanel");
     
     if (currentUserRole === "katibu") {
-        roleBadge.innerText = "Katibu (Admin)";
-        roleBadge.className = "badge bg-danger position-absolute top-0 end-0 m-3 p-2";
-        adminPanel.style.display = "block";
+        if (roleBadge) {
+            roleBadge.innerText = "Katibu (Admin)";
+            roleBadge.className = "badge bg-danger position-absolute top-0 end-0 m-3 p-2";
+        }
+        if (adminPanel) adminPanel.style.display = "block";
     } else {
-        roleBadge.innerText = "Mwanachama";
-        roleBadge.className = "badge bg-warning text-dark position-absolute top-0 end-0 m-3 p-2";
-        adminPanel.style.display = "none";
+        if (roleBadge) {
+            roleBadge.innerText = "Mwanachama";
+            roleBadge.className = "badge bg-warning text-dark position-absolute top-0 end-0 m-3 p-2";
+        }
+        if (adminPanel) adminPanel.style.display = "none";
     }
 
     // Pakia data kutoka Database
@@ -124,8 +150,10 @@ async function fetchMembersFromDatabase() {
 async function saveMember(e) {
     e.preventDefault();
     const saveBtn = document.getElementById("btnSaveMember");
-    saveBtn.disabled = true;
-    saveBtn.innerText = "Inahifadhi...";
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerText = "Inahifadhi...";
+    }
 
     const id = document.getElementById("m_id").value.trim();
     const name = document.getElementById("m_name").value.trim();
@@ -139,7 +167,7 @@ async function saveMember(e) {
     let photoUrl = "";
 
     // Kama kuna picha imepakiwa
-    if (fileInput.files.length > 0) {
+    if (fileInput && fileInput.files.length > 0) {
         const file = fileInput.files[0];
         const fileExt = file.name.split('.').pop();
         const fileName = `${id}_${Date.now()}.${fileExt}`;
@@ -161,8 +189,10 @@ async function saveMember(e) {
             photoUrl = data.publicUrl;
         } catch (uploadErr) {
             alert("Imeshindikana kupakia picha: " + uploadErr.message);
-            saveBtn.disabled = false;
-            saveBtn.innerText = "Hifadhi Mwanachama";
+            if (saveBtn) {
+                saveBtn.disabled = false;
+                saveBtn.innerText = "Hifadhi Mwanachama";
+            }
             return;
         }
     }
@@ -191,12 +221,13 @@ async function saveMember(e) {
             if (error) throw error;
         } else {
             // New Registration
-            // Angalia kama ID ipo tayari
             const exists = allMembers.some(m => m.id === id);
             if (exists) {
                 alert(`Namba ya Mwanachama ${id} tayari ipo kwenye mfumo!`);
-                saveBtn.disabled = false;
-                saveBtn.innerText = "Hifadhi Mwanachama";
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerText = "Hifadhi Mwanachama";
+                }
                 return;
             }
 
@@ -207,21 +238,35 @@ async function saveMember(e) {
             if (error) throw error;
         }
 
-        // Funga Modal na Update skrini
-        bootstrap.Modal.getInstance(document.getElementById('memberModal')).hide();
+        // Funga Modal salama
+        const modalEl = document.getElementById('memberModal');
+        if (modalEl) {
+            const modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            modalInstance.hide();
+        }
+
         await fetchMembersFromDatabase();
         alert("Mwanachama amehifadhiwa kikamilifu mtandaoni!");
     } catch (saveErr) {
         alert("Imeshindikana kuhifadhi mwanachama: " + saveErr.message);
     } finally {
-        saveBtn.disabled = false;
-        saveBtn.innerText = "Hifadhi Mwanachama";
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerText = "Hifadhi Mwanachama";
+        }
     }
 }
 
 // Ingiza / Badilisha data za Leo za Mwanachama
 async function saveDailyData(e) {
     e.preventDefault();
+    
+    const saveBtn = e.target.querySelector('button[type="submit"]') || document.querySelector("#dataForm button[type='submit']");
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerText = "Inahifadhi...";
+    }
+
     const id = document.getElementById("dataMemberId").value;
 
     const hisa_leo = parseFloat(document.getElementById("d_hisa").value) || 0;
@@ -248,21 +293,32 @@ async function saveDailyData(e) {
 
         if (error) throw error;
 
-        bootstrap.Modal.getInstance(document.getElementById('dataModal')).hide();
+        // Funga Modal salama
+        const modalEl = document.getElementById('dataModal');
+        if (modalEl) {
+            const modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            modalInstance.hide();
+        }
+        
         await fetchMembersFromDatabase();
         alert("Taarifa za leo zimehifadhiwa mtandaoni!");
     } catch (err) {
         alert("Imeshindikana kusave data za leo: " + err.message);
+    } finally {
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerText = "Hifadhi Data za Leo";
+        }
     }
 }
 
 // === RENDER MEMBERS KADI ===
 function renderMembers() {
     const listContainer = document.getElementById("membersList");
+    if (!listContainer) return;
     listContainer.innerHTML = "";
 
     allMembers.forEach(m => {
-        // Mahesabu ya Mtiririko
         const jumlaHisa = (m.hisa_anzia || 0) + (m.hisa_leo || 0);
         const jumlaAfya = m.afya_leo || 0;
         const jumlaJamii = m.jamii_leo || 0;
@@ -276,7 +332,6 @@ function renderMembers() {
 
         const photoSrc = m.photo_url || "https://via.placeholder.com/150?text=Sauti+Moja";
 
-        // Tofautisha muonekano wa Katibu na Mwanachama
         const editButton = currentUserRole === "katibu" ? 
             `<button class="btn btn-sm btn-outline-primary" onclick="openEditMember('${m.id}')"><i class="fa-solid fa-user-gear"></i> Hariri Profaili</button>
              <button class="btn btn-sm btn-primary" onclick="openDailyDataModal('${m.id}')"><i class="fa-solid fa-coins"></i> Ingiza Data za Leo</button>` : '';
@@ -345,32 +400,29 @@ function calculateDashboardTotals() {
     jumlaIliyolipwaKuu = hisaLipwa + jamiiLipwa;
     jumlaMadeniKuu = bakiHisa + bakiJamii;
 
-    document.getElementById("totalHisa").innerText = hisa.toLocaleString() + " TSh";
-    document.getElementById("totalAfya").innerText = afya.toLocaleString() + " TSh";
-    document.getElementById("totalJamii").innerText = jamii.toLocaleString() + " TSh";
-    document.getElementById("totalFaini").innerText = faini.toLocaleString() + " TSh";
-    
-    document.getElementById("totalMkopoHisa").innerText = mkopoHisa.toLocaleString() + " TSh";
-    document.getElementById("totalHisaLipwa").innerText = hisaLipwa.toLocaleString() + " TSh";
-    document.getElementById("totalBakiHisa").innerText = bakiHisa.toLocaleString() + " TSh";
+    const elements = {
+        totalHisa: hisa, totalAfya: afya, totalJamii: jamii, totalFaini: faini,
+        totalMkopoHisa: mkopoHisa, totalHisaLipwa: hisaLipwa, totalBakiHisa: bakiHisa,
+        totalMkopoJamii: mkopoJamii, totalJamiiLipwa: jamiiLipwa, totalBakiJamii: bakiJamii,
+        grandTotalMkopo: jumlaMikopoKuu, grandTotalLipwa: jumlaIliyolipwaKuu, grandTotalDeni: jumlaMadeniKuu
+    };
 
-    document.getElementById("totalMkopoJamii").innerText = mkopoJamii.toLocaleString() + " TSh";
-    document.getElementById("totalJamiiLipwa").innerText = jamiiLipwa.toLocaleString() + " TSh";
-    document.getElementById("totalBakiJamii").innerText = bakiJamii.toLocaleString() + " TSh";
-
-    document.getElementById("grandTotalMkopo").innerText = jumlaMikopoKuu.toLocaleString() + " TSh";
-    document.getElementById("grandTotalLipwa").innerText = jumlaIliyolipwaKuu.toLocaleString() + " TSh";
-    document.getElementById("grandTotalDeni").innerText = jumlaMadeniKuu.toLocaleString() + " TSh";
+    for (const [id, val] of Object.entries(elements)) {
+        const el = document.getElementById(id);
+        if (el) el.innerText = val.toLocaleString() + " TSh";
+    }
 }
 
 // === UTAFUTAJI (SEARCH) ===
 function filterMembers() {
-    const query = document.getElementById("searchInput").value.toLowerCase();
+    const queryEl = document.getElementById("searchInput");
+    if (!queryEl) return;
+    const query = queryEl.value.toLowerCase();
     const items = document.querySelectorAll(".member-item");
 
     items.forEach(item => {
-        const name = item.getAttribute("data-name");
-        const id = item.getAttribute("data-id");
+        const name = item.getAttribute("data-name") || "";
+        const id = item.getAttribute("data-id") || "";
         if (name.includes(query) || id.includes(query)) {
             item.style.display = "block";
         } else {
@@ -385,8 +437,11 @@ function openEditMember(id) {
     if (!m) return;
 
     document.getElementById("editMemberId").value = id;
-    document.getElementById("m_id").value = m.id;
-    document.getElementById("m_id").disabled = true; // huwezi kubadili ID
+    
+    const mId = document.getElementById("m_id");
+    mId.value = m.id;
+    mId.disabled = true; 
+    
     document.getElementById("m_name").value = m.name;
     document.getElementById("m_phone").value = m.phone || "";
     document.getElementById("m_gender").value = m.gender || "Mwanaume";
@@ -396,8 +451,11 @@ function openEditMember(id) {
 
     document.getElementById("modalTitle").innerText = "Hariri Profaili ya Mwanachama";
     
-    const myModal = new bootstrap.Modal(document.getElementById('memberModal'));
-    myModal.show();
+    const modalEl = document.getElementById('memberModal');
+    if (modalEl) {
+        const myModal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+        myModal.show();
+    }
 }
 
 // === DATA ZA LEO MODAL ===
@@ -417,12 +475,20 @@ function openDailyDataModal(id) {
     document.getElementById("d_mkopo_jamii").value = m.mkopo_jamii_mpya || 0;
     document.getElementById("d_jamii_lipwa").value = m.jamii_inayolipwa_leo || 0;
 
-    const myModal = new bootstrap.Modal(document.getElementById('dataModal'));
-    myModal.show();
+    const modalEl = document.getElementById('dataModal');
+    if (modalEl) {
+        const myModal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+        myModal.show();
+    }
 }
 
 // === EXPORT TO EXCEL ===
 function exportToExcel() {
+    if (typeof XLSX === 'undefined') {
+        alert("Maktaba ya XLSX haijapakiwa kwenye ukurasa!");
+        return;
+    }
+    
     const dataToExport = allMembers.map(m => {
         const jumlaHisa = (m.hisa_anzia || 0) + (m.hisa_leo || 0);
         const jumlaFaini = (m.faini_1 || 0) + (m.faini_2 || 0) + (m.faini_3 || 0);
