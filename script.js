@@ -91,18 +91,18 @@ function login(event) {
         if (passwordInput === "holili2026") { 
             sessionStorage.setItem("loggedInUser", JSON.stringify({ role: "admin", id: "katibu" }));
             if (loginError) loginError.style.display = "none";
-            
-            // Fanya reload kidogo ili kusafisha UI na kupakia dashboard mpya
-            window.location.reload(); 
+            checkLogin();
+            createMembersCards();
+            updateDashboard();
         } else {
             if (loginError) loginError.style.display = "block";
         }
     } else {
         sessionStorage.setItem("loggedInUser", JSON.stringify({ role: "member", id: "mwanachama" }));
         if (loginError) loginError.style.display = "none";
-        
-        // Fanya reload kidogo ili kusafisha UI
-        window.location.reload(); 
+        checkLogin();
+        createMembersCards();
+        updateDashboard();
     }
 }
 
@@ -125,7 +125,6 @@ function createMembersCards() {
     const fragment = document.createDocumentFragment();
     const isAdmin = session.role === "admin";
 
-    // Onyesha wanachama 120 au waliosajiliwa
     const memberKeys = Object.keys(membersData).length > 0 ? Object.keys(membersData) : Array.from({length: 10}, (_, i) => String(i + 1).padStart(3, "0"));
 
     memberKeys.forEach(memberId => {
@@ -134,7 +133,6 @@ function createMembersCards() {
         col.className = "col-md-6 col-lg-4 mb-4";
 
         const imageSrc = data.photo ? data.photo : "https://via.placeholder.com/100";
-        const disabledAttr = isAdmin ? "" : "disabled";
 
         col.innerHTML = `
         <div class="member-card card h-100" data-member="${memberId}">
@@ -172,6 +170,7 @@ function createMembersCards() {
     });
     
     membersList.appendChild(fragment);
+    document.querySelectorAll(".member-card").forEach(calculateMemberCard);
 }
 
 /* =====================================
@@ -225,7 +224,6 @@ async function processTodayData(event) {
 
     alert(`Taarifa za Mwanakikundi ${memberId} zimehifadhiwa Live!`);
     
-    // Funga modal
     const modalEl = document.getElementById('dataModal');
     const modal = bootstrap.Modal.getInstance(modalEl);
     if(modal) modal.hide();
@@ -303,29 +301,40 @@ function updateDashboard() {
    EVENT LISTENERS & EXPORT EXCEL
 ===================================== */
 document.addEventListener("DOMContentLoaded", () => {
-    // Dropdown Event kwa ajili ya kuonyesha/kuficha password
+    // Handling changing dropdown Katibu vs Mwanachama
     const userRoleSelect = document.getElementById("userRole");
     const passwordField = document.getElementById("passwordField");
+    
     if (userRoleSelect && passwordField) {
         userRoleSelect.addEventListener("change", function () {
-            passwordField.style.display = this.value === "katibu" ? "block" : "none";
+            if (this.value === "katibu") {
+                passwordField.style.display = "block";
+            } else {
+                passwordField.style.display = "none";
+            }
         });
     }
 
-    // Buttons
-    document.getElementById("btnLogin")?.addEventListener("click", login);
+    // Direct Login Form Submit
+    const loginForm = document.getElementById("loginForm");
+    if (loginForm) {
+        loginForm.addEventListener("submit", login);
+    }
+
+    // Logout Button
     document.getElementById("btnLogout")?.addEventListener("click", logout);
     document.getElementById("btnExport")?.addEventListener("click", exportExcel);
     document.getElementById("btnPrint")?.addEventListener("click", () => window.print());
     document.getElementById("dataForm")?.addEventListener("submit", processTodayData);
 
-    // Modal Event kwa ajili ya kuweka ID kwenye form
+    // Modal Event
     const dataModal = document.getElementById('dataModal');
     if (dataModal) {
         dataModal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
             const memberId = button.getAttribute('data-id');
-            document.getElementById('dataMemberId').value = memberId;
+            const hiddenInput = document.getElementById('dataMemberId');
+            if (hiddenInput) hiddenInput.value = memberId;
         });
     }
 
@@ -361,6 +370,5 @@ async function exportExcel() {
 function initializeApp() {
     if (!checkLogin()) return;
     createMembersCards();
-    document.querySelectorAll(".member-card").forEach(calculateMemberCard);
     updateDashboard();
 }
