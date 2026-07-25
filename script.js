@@ -3,7 +3,12 @@
 // =====================================
 const SUPABASE_URL = "https://nkdvoqbbzgjdkvvccbej.supabase.co";
 const SUPABASE_KEY = "sb_publishable__6o1FK6fIdXD9st9G8QJ9w_ZLqH6lxC";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Hakikisha Supabase Client inaanzishwa salama
+let supabase;
+if (window.supabase) {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
 
 let membersData = {};
 
@@ -12,10 +17,12 @@ function formatNumber(value) {
 }
 
 /* =====================================
-   FETCH MEMBERS FROM SUPABASE (LIVE DATA)
+   FETCH MEMBERS FROM SUPABASE
 ===================================== */
 async function loadMembersFromSupabase() {
     try {
+        if (!supabase) return initializeApp();
+        
         const { data, error } = await supabase.from('members').select('*');
 
         if (error) throw error;
@@ -215,18 +222,21 @@ async function processTodayData(event) {
         jamii_lipwa: (existing.jamiiLipwa || 0) + leoJamiiLipwa
     };
 
-    const { error } = await supabase.from('members').upsert([payload]);
-
-    if (error) {
-        alert("Imeshindikana kuhifadhi Supabase: " + error.message);
-        return;
+    if (supabase) {
+        const { error } = await supabase.from('members').upsert([payload]);
+        if (error) {
+            alert("Imeshindikana kuhifadhi Supabase: " + error.message);
+            return;
+        }
     }
 
     alert(`Taarifa za Mwanakikundi ${memberId} zimehifadhiwa Live!`);
     
     const modalEl = document.getElementById('dataModal');
-    const modal = bootstrap.Modal.getInstance(modalEl);
-    if(modal) modal.hide();
+    if (window.bootstrap && modalEl) {
+        const modal = window.bootstrap.Modal.getInstance(modalEl);
+        if(modal) modal.hide();
+    }
     
     loadMembersFromSupabase();
 }
@@ -301,7 +311,6 @@ function updateDashboard() {
    EVENT LISTENERS & EXPORT EXCEL
 ===================================== */
 document.addEventListener("DOMContentLoaded", () => {
-    // Handling changing dropdown Katibu vs Mwanachama
     const userRoleSelect = document.getElementById("userRole");
     const passwordField = document.getElementById("passwordField");
     
@@ -315,19 +324,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Direct Login Form Submit
     const loginForm = document.getElementById("loginForm");
     if (loginForm) {
         loginForm.addEventListener("submit", login);
     }
 
-    // Logout Button
     document.getElementById("btnLogout")?.addEventListener("click", logout);
     document.getElementById("btnExport")?.addEventListener("click", exportExcel);
     document.getElementById("btnPrint")?.addEventListener("click", () => window.print());
     document.getElementById("dataForm")?.addEventListener("submit", processTodayData);
 
-    // Modal Event
     const dataModal = document.getElementById('dataModal');
     if (dataModal) {
         dataModal.addEventListener('show.bs.modal', function (event) {
@@ -338,7 +344,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Search Input
     document.getElementById("searchInput")?.addEventListener("input", function (e) {
         const term = e.target.value.toLowerCase();
         document.querySelectorAll(".member-card").forEach(card => {
