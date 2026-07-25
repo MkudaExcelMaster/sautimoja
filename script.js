@@ -88,19 +88,21 @@ function login(event) {
     const loginError = document.getElementById("loginError");
 
     if (userRole === "katibu") {
-        // Password ya Katibu (unaweza kubadilisha hapa)
         if (passwordInput === "holili2026") { 
             sessionStorage.setItem("loggedInUser", JSON.stringify({ role: "admin", id: "katibu" }));
             if (loginError) loginError.style.display = "none";
-            initializeApp();
+            
+            // Fanya reload kidogo ili kusafisha UI na kupakia dashboard mpya
+            window.location.reload(); 
         } else {
             if (loginError) loginError.style.display = "block";
         }
     } else {
-        // Mwanachama wa kawaida (View Only)
         sessionStorage.setItem("loggedInUser", JSON.stringify({ role: "member", id: "mwanachama" }));
         if (loginError) loginError.style.display = "none";
-        initializeApp();
+        
+        // Fanya reload kidogo ili kusafisha UI
+        window.location.reload(); 
     }
 }
 
