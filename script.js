@@ -476,17 +476,22 @@ function applyRolePermissions() {
     const isAdmin = currentUser && currentUser.role === "admin";
 
     if (!isAdmin) {
-        // Ficha batani za Admin zote
+        // 1. Ficha batani za Admin zote (Export, Backup, Funga Data)
         document.querySelectorAll(".controls-container button").forEach(btn => btn.style.display = "none");
         
-        // Onyesha kadi ya mwanachama huyu pekee
-        const userMemberId = String(currentUser.id).padStart(3, "0");
+        // 2. Format ID za kutafuta (Mfano: "001" na "1")
+        const formattedIdWithZeros = String(currentUser.id).padStart(3, "0");
+        const rawIdString = String(currentUser.id);
+
+        // 3. Tafuta kadi inayohusika
         document.querySelectorAll(".member-card").forEach(card => {
             const cardId = card.getAttribute("data-member");
-            if (cardId !== userMemberId) {
-                card.style.display = "none";
-            } else {
-                card.style.display = "block";
+            
+            // Kulinganisha ID zote mbili
+            if (cardId === formattedIdWithZeros || cardId === rawIdString) {
+                card.style.display = "block"; // Onyesha kadi yake pekee
+                
+                // Zuia member asibadilishe taarifa zake za msingi (Read-only)
                 card.querySelectorAll("input, select").forEach(input => {
                     if (!input.classList.contains("hisaWiki") && 
                         !input.classList.contains("afya") && 
@@ -494,11 +499,17 @@ function applyRolePermissions() {
                         input.disabled = true;
                     }
                 });
+            } else {
+                card.style.display = "none"; // Ficha kadi za wanachama wengine
             }
         });
     } else {
-        // Onyesha kadi zote kwa Admin
-        document.querySelectorAll(".member-card").forEach(card => card.style.display = "block");
+        // Kama ni Admin: Onyesha kadi zote na batani zote za mfumo
+        document.querySelectorAll(".member-card").forEach(card => {
+            card.style.display = "block";
+            // Kagua ili kuondoa disable kwenye masanduku yote kwa Admin
+            card.querySelectorAll("input, select").forEach(input => input.disabled = false);
+        });
         document.querySelectorAll(".controls-container button").forEach(btn => btn.style.display = "inline-block");
     }
 }
