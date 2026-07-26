@@ -266,19 +266,19 @@ function processTodayData(memberId) {
 ===================================== */
 function calculateMember(card) {
     const memberId = card.getAttribute("data-member");
-    const db = membersData[memberId] || {};
+    const mData = membersData[memberId] || {};
     const getLeo = cls => Number(card.querySelector(cls)?.value || 0);
 
-    const totalShares = (db.hisaAnzia || 0) + getLeo(".hisaWiki");
-    const totalHealth = (db.afya || 0) + getLeo(".afya");
-    const totalCommunity = (db.jamii || 0) + getLeo(".jamii");
-    const totalFines = (db.faini1 || 0) + (db.faini2 || 0) + (db.faini3 || 0) + getLeo(".faini1") + getLeo(".faini2") + getLeo(".faini3");
+    const totalShares = (mData.hisaAnzia || 0) + getLeo(".hisaWiki");
+    const totalHealth = (mData.afya || 0) + getLeo(".afya");
+    const totalCommunity = (mData.jamii || 0) + getLeo(".jamii");
+    const totalFines = (mData.faini1 || 0) + (mData.faini2 || 0) + (mData.faini3 || 0) + getLeo(".faini1") + getLeo(".faini2") + getLeo(".faini3");
     
-    const debtShares = ((db.mkopoHisa || 0) + getLeo(".mkopoHisa")) - ((db.hisaLipwa || 0) + getLeo(".hisaLipwa"));
-    const debtCommunity = ((db.mkopoJamii || 0) + getLeo(".mkopoJamii")) - ((db.jamiiLipwa || 0) + getLeo(".jamiiLipwa"));
+    const debtShares = ((mData.mkopoHisa || 0) + getLeo(".mkopoHisa")) - ((mData.hisaLipwa || 0) + getLeo(".hisaLipwa"));
+    const debtCommunity = ((mData.mkopoJamii || 0) + getLeo(".mkopoJamii")) - ((mData.jamiiLipwa || 0) + getLeo(".jamiiLipwa"));
     
-    const totalLoans = (db.mkopoHisa || 0) + (db.mkopoJamii || 0) + getLeo(".mkopoHisa") + getLeo(".mkopoJamii");
-    const totalPaid = (db.hisaLipwa || 0) + (db.jamiiLipwa || 0) + getLeo(".hisaLipwa") + getLeo(".jamiiLipwa");
+    const totalLoans = (mData.mkopoHisa || 0) + (mData.mkopoJamii || 0) + getLeo(".mkopoHisa") + getLeo(".mkopoJamii");
+    const totalPaid = (mData.hisaLipwa || 0) + (mData.jamiiLipwa || 0) + getLeo(".hisaLipwa") + getLeo(".jamiiLipwa");
     const totalDebt = debtShares + debtCommunity;
 
     card.querySelector(".resultTotalShares").textContent = formatNumber(totalShares);
