@@ -243,65 +243,326 @@ function logout() {
 /* =====================================
    UI BUILDER
 ===================================== */
+/* =====================================
+   CREATE MEMBER CARDS
+   ADMIN = SEE ALL MEMBERS
+   MEMBER = SEE OWN CARD ONLY
+===================================== */
+
 function createMembersCards() {
+
     const membersList = document.getElementById("membersList");
+
     if (!membersList) return;
-    
+
+
     membersList.innerHTML = "";
-    const session = JSON.parse(sessionStorage.getItem("loggedInUser"));
+
+
+    const session = JSON.parse(
+        sessionStorage.getItem("loggedInUser")
+    );
+
+
     if (!session) return;
 
-    const fragment = document.createDocumentFragment();
-    const isAdmin = session.role === "admin";
 
-    const memberKeys = Object.keys(membersData).length > 0 ? Object.keys(membersData) : Array.from({length: 10}, (_, i) => String(i + 1).padStart(3, "0"));
+
+    const fragment = document.createDocumentFragment();
+
+
+
+    /*
+    =========================
+    ADMIN VIEW
+    =========================
+    */
+
+    let memberKeys = [];
+
+
+    if (session.role === "admin") {
+
+
+        // Admin anaona wote
+        memberKeys = Object.keys(membersData);
+
+
+    } else {
+
+
+        /*
+        =========================
+        MEMBER VIEW
+        =========================
+        */
+
+        // Mwanachama anaona ID yake tu
+
+        if (membersData[session.id]) {
+
+            memberKeys = [session.id];
+
+        }
+
+    }
+
+
+
 
     memberKeys.forEach(memberId => {
-        const data = membersData[memberId] || {};
-        const col = document.createElement("div");
-        col.className = "col-md-6 col-lg-4 mb-4";
 
-        const imageSrc = data.photo ? data.photo : "https://via.placeholder.com/100";
+
+        const data = membersData[memberId] || {};
+
+
+
+        const col = document.createElement("div");
+
+
+        // Member mmoja aonekane vizuri
+        if(session.role==="member"){
+
+            col.className =
+            "col-md-6 col-lg-6 mx-auto mb-4";
+
+        }else{
+
+            col.className =
+            "col-md-6 col-lg-4 mb-4";
+
+        }
+
+
+
+        const imageSrc =
+        data.photo 
+        ? data.photo 
+        : "images/avatar.png";
+
+
 
         col.innerHTML = `
-        <div class="member-card card h-100" data-member="${memberId}">
+
+        <div class="member-card card shadow-sm h-100"
+             data-member="${memberId}">
+
+
             <div class="card-header-custom">
-                <span>ID: ${memberId}</span>
-                <span class="badge bg-primary">${data.gender || 'Mwanachama'}</span>
+
+                <span>
+                ID: ${memberId}
+                </span>
+
+
+                <span class="badge bg-primary">
+                ${data.gender || "Mwanachama"}
+                </span>
+
             </div>
+
+
+
             <div class="card-body">
-                <img src="${imageSrc}" alt="Photo" class="member-photo">
-                <h5 class="card-title text-center fw-bold mb-3">${data.name || 'Mwanakikundi ' + memberId}</h5>
-                
-                <div class="summary-badge"><span>Simu:</span> <span>${data.phone || 'N/A'}</span></div>
-                <div class="summary-badge"><span>Mrithi:</span> <span>${data.mrithi || 'N/A'}</span></div>
-                
-                <hr>
-                
-                <div class="results-grid">
-                    <div class="summary-badge"><span>Jumla ya Hisa:</span> <span class="resultTotalShares text-primary fw-bold">0 TSh</span></div>
-                    <div class="summary-badge"><span>Jumla ya Afya:</span> <span class="resultHealth text-success fw-bold">0 TSh</span></div>
-                    <div class="summary-badge"><span>Jumla ya Jamii:</span> <span class="resultCommunity text-info fw-bold">0 TSh</span></div>
-                    <div class="summary-badge"><span>Jumla ya Faini:</span> <span class="resultFines text-danger fw-bold">0 TSh</span></div>
-                    <div class="summary-badge"><span>Deni Hisa:</span> <span class="resultDebtShares text-warning fw-bold">0 TSh</span></div>
-                    <div class="summary-badge"><span>Deni Jamii:</span> <span class="resultDebtCommunity text-warning fw-bold">0 TSh</span></div>
+
+
+                <div class="text-center">
+
+                    <img src="${imageSrc}"
+                    class="member-photo mb-3"
+                    width="100"
+                    height="100">
+
                 </div>
 
-                ${isAdmin ? `
-                <button class="btn btn-sm btn-outline-success w-100 mt-3 btn-enter-data" data-bs-toggle="modal" data-bs-target="#dataModal" data-id="${memberId}">
-                    <i class="fa-solid fa-plus-circle"></i> Ingiza Data za Leo
+
+
+                <h5 class="text-center fw-bold">
+
+                ${data.name || "Mwanachama"}
+
+                </h5>
+
+
+
+                <hr>
+
+
+                <div class="summary-badge">
+
+                    <span>Simu:</span>
+
+                    <b>
+                    ${data.phone || ""}
+                    </b>
+
+                </div>
+
+
+
+                <div class="summary-badge">
+
+                    <span>Mrithi:</span>
+
+                    <b>
+                    ${data.mrithi || ""}
+                    </b>
+
+                </div>
+
+
+
+                <hr>
+
+
+
+                <div class="results-grid">
+
+
+                    <div class="summary-badge">
+
+                    <span>Hisa:</span>
+
+                    <b class="resultTotalShares">
+                    0 TSh
+                    </b>
+
+                    </div>
+
+
+
+                    <div class="summary-badge">
+
+                    <span>Afya:</span>
+
+                    <b class="resultHealth">
+                    0 TSh
+                    </b>
+
+                    </div>
+
+
+
+
+                    <div class="summary-badge">
+
+                    <span>Jamii:</span>
+
+                    <b class="resultCommunity">
+                    0 TSh
+                    </b>
+
+                    </div>
+
+
+
+
+                    <div class="summary-badge">
+
+                    <span>Faini:</span>
+
+                    <b class="resultFines">
+                    0 TSh
+                    </b>
+
+                    </div>
+
+
+
+
+                    <div class="summary-badge">
+
+                    <span>Deni Hisa:</span>
+
+                    <b class="resultDebtShares">
+                    0 TSh
+                    </b>
+
+                    </div>
+
+
+
+
+                    <div class="summary-badge">
+
+                    <span>Deni Jamii:</span>
+
+                    <b class="resultDebtCommunity">
+                    0 TSh
+                    </b>
+
+                    </div>
+
+
+
+                </div>
+
+
+
+
+                ${
+                session.role==="admin"
+
+                ?
+
+                `
+
+                <button
+
+                class="btn btn-success w-100 mt-3"
+
+                data-bs-toggle="modal"
+
+                data-bs-target="#dataModal"
+
+                data-id="${memberId}">
+
+
+                <i class="fa fa-plus-circle"></i>
+
+                Ingiza Data ya Leo
+
+
                 </button>
-                ` : ''}
+
+
+                `
+
+                :
+
+                ""
+
+                }
+
+
+
             </div>
-        </div>`;
+
+        </div>
+
+
+        `;
+
+
 
         fragment.appendChild(col);
-    });
-    
-    membersList.appendChild(fragment);
-    document.querySelectorAll(".member-card").forEach(calculateMemberCard);
-}
 
+
+    });
+
+
+
+    membersList.appendChild(fragment);
+
+
+
+    document
+    .querySelectorAll(".member-card")
+    .forEach(calculateMemberCard);
+
+
+
+}
 /* =====================================
    SAVE DATA TO SUPABASE
 ===================================== */
