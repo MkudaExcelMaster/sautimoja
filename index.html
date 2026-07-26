@@ -4,198 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SAUTI MOJA VIJANA GROUP HOLILI</title>
-    <link rel="stylesheet" href="style.css">
     
-    <!-- Maboresho ya CSS ya haraka ili kadi mpya zenye data za ziada zikae kwa unadhifu -->
-    <style>
-        .member-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        .member-header {
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
-            border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
-        }
-        .member-info {
-            flex: 1;
-        }
-        .member-info input, .member-info select {
-            width: 100%;
-            padding: 6px 10px;
-            margin-top: 5px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-        .grid, .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
-        }
-        .result-item {
-            background: #f8fafc;
-            padding: 8px;
-            border-radius: 4px;
-            text-align: center;
-            border: 1px solid #e2e8f0;
-        }
-        .result-item span {
-            display: block;
-            font-size: 11px;
-            color: #64748b;
-        }
-        .result-item strong {
-            font-size: 14px;
-            color: #1e293b;
-        }
-    </style>
+    <!-- File lako la CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- 1. CDN ya Supabase JS (LAZIMA iwe hapa juu) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 2. CDN ya SheetJS / XLSX (Kwa ajili ya kusoma wanakikundi.xlsx) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <!-- 3. CDN ya ExcelJS (Kwa ajili ya Export Excel) -->
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
 </head>
 <body>
 
-<header class="main-header">
-    <h1>SAUTI MOJA VIJANA GROUP HOLILI</h1>
-    <p class="subtitle">
-        Mfumo wa Kusimamia Hisa, Afya, Jamii, Faini na Mikopo ya Wanakikundi
-    </p>
-</header>
+    <!-- SECTION YA DASHBOARD KUU -->
+    <div class="dashboard-container">
+        <h2>DASHBOARD YA UHASEBU (CASH FLOW)</h2>
+        <div class="dashboard-grid">
+            <div class="dash-card"><span>Jumla ya Hisa</span><strong id="totalShares">0</strong></div>
+            <div class="dash-card"><span>Jumla ya Afya</span><strong id="totalHealth">0</strong></div>
+            <div class="dash-card"><span>Jumla ya Jamii</span><strong id="totalCommunity">0</strong></div>
+            <div class="dash-card"><span>Jumla ya Faini</span><strong id="totalFines">0</strong></div>
+            <div class="dash-card"><span>Mkopo Hisa Yote</span><strong id="totalLoanShares">0</strong></div>
+            <div class="dash-card"><span>Hisa Iliyolipwa</span><strong id="totalSharesPaid">0</strong></div>
+            <div class="dash-card"><span>Baki Mkopo Hisa</span><strong id="totalSharesBalance">0</strong></div>
+            <div class="dash-card"><span>Mkopo Jamii Yote</span><strong id="totalLoanCommunity">0</strong></div>
+            <div class="dash-card"><span>Jamii Iliyolipwa</span><strong id="totalCommunityPaid">0</strong></div>
+            <div class="dash-card"><span>Baki Mkopo Jamii</span><strong id="totalCommunityBalance">0</strong></div>
+            <div class="dash-card"><span>Jumla Mikopo</span><strong id="totalLoans">0</strong></div>
+            <div class="dash-card"><span>Jumla Iliyolipwa</span><strong id="totalPaidLoans">0</strong></div>
+            <div class="dash-card"><span>Jumla Madeni</span><strong id="totalDebt">0</strong></div>
+        </div>
 
-<!-- DASHBOARD KUU -->
-<section class="group-dashboard">
-
-    <!-- HISA -->
-    <div class="dashboard-card">
-        <h3>💳 Jumla ya Hisa</h3>
-        <p id="totalShares">0</p>
+        <!-- Zana za Mfumo (Buttons & Search) -->
+        <div class="controls-container" style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+            <input type="text" id="searchMember" placeholder="Tafuta Mwanakikundi..." oninput="searchMember()" style="padding: 8px; flex: 1;">
+            <button onclick="saveAllData()" style="background-color: #2563EB; color: white; border: none; padding: 8px 15px; cursor: pointer;">💾 Funga Data Zote za Leo</button>
+            <button onclick="exportExcel()" style="background-color: #059669; color: white; border: none; padding: 8px 15px; cursor: pointer;">📥 Export Excel</button>
+            <button onclick="backupData()" style="background-color: #4B5563; color: white; border: none; padding: 8px 15px; cursor: pointer;">📦 Backup JSON</button>
+            <input type="file" id="restoreFile" accept=".json" onchange="restoreData(event)" style="display: none;">
+            <button onclick="document.getElementById('restoreFile').click()" style="background-color: #DC2626; color: white; border: none; padding: 8px 15px; cursor: pointer;">📤 Restore Backup</button>
+        </div>
     </div>
 
-    <!-- AFYA -->
-    <div class="dashboard-card">
-        <h3>🏥 Jumla ya Afya</h3>
-        <p id="totalHealth">0</p>
-    </div>
+    <hr style="margin: 20px 0;">
 
-    <!-- JAMII -->
-    <div class="dashboard-card">
-        <h3>👥 Jumla ya Jamii</h3>
-        <p id="totalCommunity">0</p>
-    </div>
+    <!-- ENEO LA KADI ZA WANAKIKUNDI -->
+    <div id="membersContainer"></div>
 
-    <!-- FAINI -->
-    <div class="dashboard-card">
-        <h3>⚠️ Jumla ya Faini</h3>
-        <p id="totalFines">0</p>
-    </div>
-
-    <!-- MIKOPO HISA -->
-    <div class="dashboard-card">
-        <h3>💳 Jumla Mkopo Hisa</h3>
-        <p id="totalLoanShares">0</p>
-    </div>
-
-    <div class="dashboard-card">
-        <h3>✅ Hisa Lipwa</h3>
-        <p id="totalSharesPaid">0</p>
-    </div>
-
-    <div class="dashboard-card warning">
-        <h3>📉 Baki Mkopo Hisa</h3>
-        <p id="totalSharesBalance">0</p>
-    </div>
-
-    <!-- MIKOPO JAMII -->
-    <div class="dashboard-card">
-        <h3>💳 Jumla Mkopo Jamii</h3>
-        <p id="totalLoanCommunity">0</p>
-    </div>
-
-    <div class="dashboard-card">
-        <h3>✅ Jamii Lipwa</h3>
-        <p id="totalCommunityPaid">0</p>
-    </div>
-
-    <div class="dashboard-card warning">
-        <h3>📉 Baki Mkopo Jamii</h3>
-        <p id="totalCommunityBalance">0</p>
-    </div>
-
-    <!-- JUMLA YA MIKOPO -->
-    <div class="dashboard-card">
-        <h3>💰 Jumla ya Mikopo</h3>
-        <p id="totalLoans">0</p>
-    </div>
-
-    <div class="dashboard-card">
-        <h3>💵 Jumla Iliyolipwa</h3>
-        <p id="totalPaidLoans">0</p>
-    </div>
-
-    <div class="dashboard-card danger">
-        <h3>🚨 Jumla ya Madeni</h3>
-        <p id="totalDebt">0</p>
-    </div>
-
-</section>
-
-<!-- VITENDO -->
-<section class="action-buttons">
-    <button onclick="saveAllData()">
-        💾 Hifadhi Taarifa Zote
-    </button>
-
-    <button onclick="window.print()">
-        🖨️ Print Taarifa
-    </button>
-
-    <button onclick="location.reload()">
-        🔄 Refresh Mfumo
-    </button>
-
-    <button onclick="backupData()">
-        💾 Backup Data
-    </button>
-
-    <button onclick="document.getElementById('restoreFile').click()">
-        📂 Restore Backup
-    </button>
-    <input type="file" id="restoreFile" accept=".json" onchange="restoreData(event)" hidden>
-
-    <button onclick="exportExcel()">
-        📊 Export Excel
-    </button>
-</section>
-
-<!-- SEARCH -->
-<section class="search-area">
-    <input
-        type="text"
-        id="searchMember"
-        placeholder="🔍 Tafuta mwanakikundi kwa jina au namba..."
-        onkeyup="searchMember()">
-</section>
-
-<!-- TAARIFA ZA WANAKIKUNDI (Zitajengwa na JS) -->
-<section id="membersContainer"></section>
-
-<!-- =====================================
-     MAKTABA ZA NJE NA SCRIPT (LIBRARIES)
-===================================== -->
-<!-- 1. ExcelJS (Kwa ajili ya Ku-export Excel) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
-
-<!-- 2. SheetJS / XLSX (Inahitajika kusoma wanakikundi.xlsx) -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
-<!-- 3. Faili lako la Logic -->
-<script src="script.js"></script>
-
+    <!-- 4. File lako la JavaScript (Chini kabisa kabla ya kufunga </body>) -->
+    <script src="script.js"></script>
 </body>
 </html>
