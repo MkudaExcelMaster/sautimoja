@@ -423,6 +423,7 @@ window.addEventListener("DOMContentLoaded", loadMembersFromSupabase);
 /* =====================================
    MFUMO WA LOGIN NA UTAMBULISHO (ROLES)
 ===================================== *
+
 let currentUser = null;
 
 async function handleLogin() {
