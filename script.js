@@ -412,18 +412,18 @@ function searchMember() {
 
 function initializeApp() {
     createMembersCards();
+
+    // Kuhesabu upya kila kadi wakati wa kuanza
     document.querySelectorAll(".member-card").forEach(card => {
         calculateMember(card);
     });
+
     updateDashboard();
 }
 
-window.addEventListener("DOMContentLoaded", loadMembersFromSupabase);
-
 /* =====================================
    MFUMO WA LOGIN NA UTAMBULISHO (ROLES)
-===================================== *
-
+===================================== */
 let currentUser = null;
 
 async function handleLogin() {
@@ -472,20 +472,18 @@ async function handleLogin() {
 function applyRolePermissions() {
     const isAdmin = currentUser && currentUser.role === "admin";
 
-    // Kama SIYO Admin (ni Member wa kawaida)
     if (!isAdmin) {
-        // 1. Ficha batani za Admin zote (Export, Backup, Funga Data Zote)
+        // Ficha batani za Admin zote
         document.querySelectorAll(".controls-container button").forEach(btn => btn.style.display = "none");
         
-        // 2. Onyesha kadi ya mwanachama huyu pekee
+        // Onyesha kadi ya mwanachama huyu pekee
         const userMemberId = String(currentUser.id).padStart(3, "0");
         document.querySelectorAll(".member-card").forEach(card => {
             const cardId = card.getAttribute("data-member");
             if (cardId !== userMemberId) {
-                card.style.display = "none"; // Ficha kadi za wengine
+                card.style.display = "none";
             } else {
                 card.style.display = "block";
-                // Zuia member asibadilishe taarifa za msingi (Read-only)
                 card.querySelectorAll("input, select").forEach(input => {
                     if (!input.classList.contains("hisaWiki") && 
                         !input.classList.contains("afya") && 
@@ -496,7 +494,7 @@ function applyRolePermissions() {
             }
         });
     } else {
-        // Kama NI Admin: Onyesha kadi zote na vianzo vyote vya kuhariri
+        // Onyesha kadi zote kwa Admin
         document.querySelectorAll(".member-card").forEach(card => card.style.display = "block");
         document.querySelectorAll(".controls-container button").forEach(btn => btn.style.display = "inline-block");
     }
