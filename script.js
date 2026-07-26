@@ -519,3 +519,135 @@ function handleLogout() {
     document.getElementById("loginSection").style.display = "block";
     document.getElementById("appSection").style.display = "none";
 }
+
+/* =====================================
+   SAVE ALL DATA (FUNGA DATA ZOTE ZA LEO)
+===================================== */
+async function saveAllData() {
+    try {
+        const cards = document.querySelectorAll(".member-card");
+        let saveCount = 0;
+
+        for (const card of cards) {
+            const memberId = card.getAttribute("data-member");
+            if (!memberId) continue;
+
+            const name = card.querySelector(".member-name")?.value || "";
+            const phone = card.querySelector(".member-phone")?.value || "";
+            const gender = card.querySelector(".member-gender")?.value || "";
+            let dob = card.querySelector(".member-dob")?.value || null;
+            if (dob === "") dob = null; // Zuia Error ya Invalid Date Syntax
+
+            const guardian = card.querySelector(".member-mrithi")?.value || "";
+            const photoUrl = card.querySelector(`#photo-${memberId}`)?.src || "";
+
+            const hisaAnzia = Number(card.querySelector(".hisaAnzia")?.value || 0);
+            const afyaLeo = Number(card.querySelector(".afya")?.value || 0);
+            const jamiiLeo = Number(card.querySelector(".jamii")?.value || 0);
+            const faini1 = Number(card.querySelector(".faini1")?.value || 0);
+            const faini2 = Number(card.querySelector(".faini2")?.value || 0);
+            const faini3 = Number(card.querySelector(".faini3")?.value || 0);
+            const mkopoHisaMpya = Number(card.querySelector(".mkopoHisaMpya")?.value || 0);
+            const hisaInayolipwaLeo = Number(card.querySelector(".hisaInayolipwaLeo")?.value || 0);
+            const mkopoJamiiMpya = Number(card.querySelector(".mkopoJamiiMpya")?.value || 0);
+            const jamiiInayolipwaLeo = Number(card.querySelector(".jamiiInayolipwaLeo")?.value || 0);
+
+            const { error } = await db.from("members").upsert({
+                id: parseInt(memberId, 10),
+                name,
+                phone,
+                gender,
+                dob,
+                guardian,
+                photo_url: photoUrl,
+                hisa_anzia: hisaAnzia,
+                afya_leo: afyaLeo,
+                jamii_leo: jamiiLeo,
+                faini_1: faini1,
+                faini_2: faini2,
+                faini_3: faini3,
+                mkopo_hisa_mpya: mkopoHisaMpya,
+                hisa_inayolipwa_leo: hisaInayolipwaLeo,
+                mkopo_jamii_mpya: mkopoJamiiMpya,
+                jamii_inayolipwa_leo: jamiiInayolipwaLeo,
+                updated_at: new Date().toISOString()
+            });
+
+            if (!error) saveCount++;
+        }
+
+        alert(`Imefanikiwa kuokoa data za wanakikundi ${saveCount} kwenye Supabase!`);
+    } catch (err) {
+        alert("Hitilafu wakati wa kuhifadhi data: " + err.message);
+    }
+}
+
+/* =====================================
+   EXPORT EXCEL (EXPORT DATA ZOTE EXCEL)
+===================================== */
+async function exportExcel() {
+    if (typeof ExcelJS === "undefined") {
+        alert("Library ya ExcelJS bado haijapakiwa. Tafadhali subiri sekunde chache au urudishe peji upya.");
+        return;
+    }
+
+    try {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Wanakikundi Cashflow");
+
+        worksheet.columns = [
+            { header: "ID", key: "id", width: 10 },
+            { header: "Jina la Mwanachama", key: "name", width: 25 },
+            { header: "Namba ya Simu", key: "phone", width: 15 },
+            { header: "Jinsia", key: "gender", width: 12 },
+            { header: "Hisa Anzia", key: "hisa_anzia", width: 15 },
+            { header: "Afya", key: "afya_leo", width: 15 },
+            { header: "Jamii", key: "jamii_leo", width: 15 },
+            { header: "Faini Total", key: "faini_total", width: 15 },
+            { header: "Mkopo Hisa Mpya", key: "mkopo_hisa", width: 18 },
+            { header: "Hisa Iliyolipwa", key: "hisa_lipwa", width: 18 },
+            { header: "Mkopo Jamii Mpya", key: "mkopo_jamii", width: 18 },
+            { header: "Jamii Iliyolipwa", key: "jamii_lipwa", width: 18 }
+        ];
+
+        document.querySelectorAll(".member-card").forEach(card => {
+            const memberId = card.getAttribute("data-member");
+            const name = card.querySelector(".member-name")?.value || "";
+            const phone = card.querySelector(".member-phone")?.value || "";
+            const gender = card.querySelector(".member-gender")?.value || "";
+
+            const hisaAnzia = Number(card.querySelector(".hisaAnzia")?.value || 0);
+            const afya = Number(card.querySelector(".afya")?.value || 0);
+            const jamii = Number(card.querySelector(".jamii")?.value || 0);
+            const f1 = Number(card.querySelector(".faini1")?.value || 0);
+            const f2 = Number(card.querySelector(".faini2")?.value || 0);
+            const f3 = Number(card.querySelector(".faini3")?.value || 0);
+            const mkopoHisa = Number(card.querySelector(".mkopoHisaMpya")?.value || 0);
+            const hisaLipwa = Number(card.querySelector(".hisaInayolipwaLeo")?.value || 0);
+            const mkopoJamii = Number(card.querySelector(".mkopoJamiiMpya")?.value || 0);
+            const jamiiLipwa = Number(card.querySelector(".jamiiInayolipwaLeo")?.value || 0);
+
+            worksheet.addRow({
+                id: memberId,
+                name: name,
+                phone: phone,
+                gender: gender,
+                hisa_anzia: hisaAnzia,
+                afya_leo: afya,
+                jamii_leo: jamii,
+                faini_total: f1 + f2 + f3,
+                mkopo_hisa: mkopoHisa,
+                hisa_lipwa: hisaLipwa,
+                mkopo_jamii: mkopoJamii,
+                jamii_lipwa: jamiiLipwa
+            });
+        });
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        saveAs(blob, `Sauti_Moja_Ripoti_${new Date().toISOString().slice(0, 10)}.xlsx`);
+
+    } catch (err) {
+        alert("Hitilafu kwenye ku-export Excel: " + err.message);
+    }
+}
