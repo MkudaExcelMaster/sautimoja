@@ -91,30 +91,148 @@ function checkLogin() {
     }
 }
 
-function login(event) {
-    if (event) event.preventDefault();
-    
-    const userRole = document.getElementById("userRole") ? document.getElementById("userRole").value : "mwanachama";
-    const passwordInput = document.getElementById("loginPassword") ? document.getElementById("loginPassword").value.trim() : "";
-    const loginError = document.getElementById("loginError");
+async function login(event){
 
-    if (userRole === "katibu") {
-        if (passwordInput === "holili2026") { 
-            sessionStorage.setItem("loggedInUser", JSON.stringify({ role: "admin", id: "katibu" }));
-            if (loginError) loginError.style.display = "none";
-            checkLogin();
-            createMembersCards();
-            updateDashboard();
-        } else {
-            if (loginError) loginError.style.display = "block";
-        }
-    } else {
-        sessionStorage.setItem("loggedInUser", JSON.stringify({ role: "member", id: "mwanachama" }));
-        if (loginError) loginError.style.display = "none";
-        checkLogin();
-        createMembersCards();
-        updateDashboard();
-    }
+event.preventDefault();
+
+
+const role =
+document.getElementById("userRole").value;
+
+
+const password =
+document.getElementById("loginPassword").value.trim();
+
+
+
+/*
+=========================
+ADMIN LOGIN
+=========================
+*/
+
+if(role==="admin"){
+
+
+if(password==="holili2026"){
+
+
+sessionStorage.setItem(
+"loggedInUser",
+JSON.stringify({
+role:"admin"
+})
+);
+
+
+initializeApp();
+
+
+}else{
+
+
+alert("Password ya Katibu sio sahihi");
+
+
+}
+
+
+return;
+
+}
+
+
+
+/*
+=========================
+MEMBER LOGIN
+=========================
+*/
+
+
+const phone =
+document.getElementById("phoneNumber")
+.value.trim();
+
+
+
+const {data,error}=await db
+.from("members")
+.select("*")
+.eq("phone",phone)
+.eq("id",password)
+.single();
+
+
+
+if(error || !data){
+
+alert(
+"Namba ya simu au Member ID sio sahihi"
+);
+
+return;
+
+}
+
+
+
+membersData={};
+
+
+membersData[data.id]={
+
+name:data.name,
+phone:data.phone,
+gender:data.gender,
+
+joinDate:data.join_date,
+
+birthDate:data.birth_date,
+
+mrithi:data.mrithi,
+
+
+hisaAnzia:data.hisa_anzia || 0,
+
+afya:data.afya || 0,
+
+jamii:data.jamii || 0,
+
+
+faini1:data.faini1 || 0,
+
+faini2:data.faini2 || 0,
+
+faini3:data.faini3 || 0,
+
+
+mkopoHisa:data.mkopo_hisa || 0,
+
+hisaLipwa:data.hisa_lipwa || 0,
+
+
+mkopoJamii:data.mkopo_jamii || 0,
+
+jamiiLipwa:data.jamii_lipwa || 0
+
+
+};
+
+
+
+sessionStorage.setItem(
+"loggedInUser",
+JSON.stringify({
+role:"member",
+id:data.id
+})
+);
+
+
+initializeApp();
+
+
 }
 
 function logout() {
