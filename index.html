@@ -29,29 +29,74 @@
                 <h4 class="fw-bold mb-1 text-primary">SAUTI MOJA VIJANA GROUP</h4>
                 <p class="text-muted small mb-4">HOLILI - KILIMANJARO</p>
 
-                <form id="loginForm" onsubmit="login(event)">
-                    <div class="mb-3 text-start">
-                        <label class="form-label fw-bold">Ingia Kama:</label>
-                        <select id="userRole" class="form-select form-select-lg">
-                            <option value="mwanachama">Mwanachama (Kusoma Tu)</option>
-                            <option value="katibu">Katibu (Usimamizi / Admin)</option>
-                        </select>
-                    </div>
+                <form id="loginForm">
 
-                    <!-- Kibox cha Password ambacho kitaonekana Katibu akichaguliwa -->
-                    <div id="passwordField" class="mb-3 text-start" style="display: none;">
-                        <label class="form-label fw-bold">Nenosiri la Katibu (Password):</label>
-                        <input type="password" id="loginPassword" class="form-control form-control-lg" placeholder="Weka password...">
-                    </div>
+<div class="mb-3 text-start">
+<label class="form-label fw-bold">
+Ingia Kama:
+</label>
 
-                    <div id="loginError" class="alert alert-danger p-2 small mb-3" style="display: none;">
-                        Nenosiri siyo sahihi! Jaribu tena.
-                    </div>
+<select id="userRole" class="form-select form-select-lg">
+<option value="member">
+Mwanachama
+</option>
 
-                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm">
-                        <i class="fa-solid fa-right-to-bracket me-2"></i> Ingia Kwenye Mfumo
-                    </button>
-                </form>
+<option value="admin">
+Katibu (Admin)
+</option>
+
+</select>
+</div>
+
+
+<div id="phoneBox" class="mb-3 text-start">
+
+<label class="form-label fw-bold">
+Namba ya Simu:
+</label>
+
+<input 
+type="text"
+id="phoneNumber"
+class="form-control form-control-lg"
+placeholder="0765449337">
+
+</div>
+
+
+<div id="passwordField" class="mb-3 text-start">
+
+<label class="form-label fw-bold">
+Password:
+</label>
+
+<input 
+type="password"
+id="loginPassword"
+class="form-control form-control-lg"
+placeholder="Member ID au Password ya Katibu">
+
+</div>
+
+
+<div id="loginError" 
+class="alert alert-danger"
+style="display:none">
+
+Taarifa sio sahihi
+
+</div>
+
+
+<button type="submit" 
+class="btn btn-primary btn-lg w-100">
+
+<i class="fa-solid fa-right-to-bracket"></i>
+Ingia
+
+</button>
+
+</form>
             </div>
         </div>
     </div>
