@@ -436,7 +436,7 @@ async function handleLogin() {
     }
 
     try {
-        // Tafuta mwanachama anayefanana na namba ya simu au jina
+        // 1. Tafuta mwanachama anayefanana na namba ya simu au jina
         const { data, error } = await db
             .from("members")
             .select("*")
@@ -455,13 +455,16 @@ async function handleLogin() {
             return;
         }
 
-        // Login Imefanikiwa
+        // 2. Login Imefanikiwa
         currentUser = user;
         document.getElementById("loginSection").style.display = "none";
         document.getElementById("appSection").style.display = "block";
         document.getElementById("currentUserInfo").textContent = `Umeingia kama: ${user.name || 'Mwanakikundi'} (${user.role === 'admin' ? 'ADMIN' : 'MEMBER'})`;
 
-        // Rekebisha Muonekano kulingana na Role
+        // 3. Zichore au zivute kadi kwanza kutoka Supabase
+        await loadMembersFromSupabase();
+
+        // 4. Rekebisha Muonekano wa kadi kulingana na Role (Admin/Member)
         applyRolePermissions();
 
     } catch (err) {
