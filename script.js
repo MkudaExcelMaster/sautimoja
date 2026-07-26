@@ -40,21 +40,21 @@ async function loadMembersFromSupabase() {
                     name: row.name || "",
                     phone: row.phone || "",
                     gender: row.gender || "",
-                    joinDate: row.joinDate || "",
-                    birthDate: row.birthDate || "",
-                    mrithi: row.mrithi || "",
-                    photo: row.photo || "",
+                    joinDate: row.created_at || row.updated_at || "",
+                    birthDate: row.dob || "",
+                    mrithi: row.guardian || "",
+                    photo: row.photo_url || "",
 
-                    hisaAnzia: Number(row.hisaAnzia || 0),
-                    afya: Number(row.afya || 0),
-                    jamii: Number(row.jamii || 0),
-                    faini1: Number(row.faini1 || 0),
-                    faini2: Number(row.faini2 || 0),
-                    faini3: Number(row.faini3 || 0),
-                    mkopoHisa: Number(row.mkopoHisa || 0),
-                    hisaLipwa: Number(row.hisaLipwa || 0),
-                    mkopoJamii: Number(row.mkopoJamii || 0),
-                    jamiiLipwa: Number(row.jamiiLipwa || 0)
+                    hisaAnzia: Number(row.hisa_anzia || 0),
+                    afya: Number(row.afya_leo || 0),
+                    jamii: Number(row.jamii_leo || 0),
+                    faini1: Number(row.faini_1 || 0),
+                    faini2: Number(row.faini_2 || 0),
+                    faini3: Number(row.faini_3 || 0),
+                    mkopoHisa: Number(row.mkopo_hisa_mpya || 0),
+                    hisaLipwa: Number(row.hisa_inayolipwa_leo || 0),
+                    mkopoJamii: Number(row.mkopo_jamii_mpya || 0),
+                    jamiiLipwa: Number(row.jamii_inayolipwa_leo || 0)
                 };
             });
             console.log("Data za Supabase zimepakiwa kikamilifu!");
@@ -185,26 +185,24 @@ membersContainer.addEventListener("click", (event) => {
 ===================================== */
 async function saveBasicInfo(card) {
     const memberId = card.getAttribute("data-member");
+    const rawId = String(parseInt(memberId, 10)); // Ondoa leading zeros kwa ajili ya DB
     if (!membersData[memberId]) membersData[memberId] = {};
 
     membersData[memberId].name = card.querySelector(".member-name").value;
     membersData[memberId].phone = card.querySelector(".member-phone").value;
     membersData[memberId].gender = card.querySelector(".member-gender").value;
-    membersData[memberId].joinDate = card.querySelector(".join-date").value;
     membersData[memberId].birthDate = card.querySelector(".member-birthdate").value;
     membersData[memberId].mrithi = card.querySelector(".member-mrithi").value;
 
-    // Hifadhi Taarifa za Msingi Supabase
     const { error } = await db
         .from("members")
         .upsert([{
-            id: memberId,
+            id: rawId,
             name: membersData[memberId].name,
             phone: membersData[memberId].phone,
             gender: membersData[memberId].gender,
-            joinDate: membersData[memberId].joinDate,
-            birthDate: membersData[memberId].birthDate,
-            mrithi: membersData[memberId].mrithi
+            dob: membersData[memberId].birthDate,
+            guardian: membersData[memberId].mrithi
         }]);
 
     if (error) {
@@ -218,6 +216,8 @@ async function saveBasicInfo(card) {
 async function processTodayData(memberId) {
     const card = document.querySelector(`[data-member="${memberId}"]`);
     if (!card) return;
+
+    const rawId = String(parseInt(memberId, 10)); // DB inatumia ID kama '1', '10' badala ya '001'
 
     const existing = membersData[memberId] || {
         hisaAnzia: 0, afya: 0, jamii: 0, faini1: 0, faini2: 0, faini3: 0,
@@ -235,16 +235,7 @@ async function processTodayData(memberId) {
     const leoMkopoJamii = Number(card.querySelector(".mkopoJamii").value || 0);
     const leoJamiiLipwa = Number(card.querySelector(".jamiiLipwa").value || 0);
 
-    const updatedData = {
-        id: memberId,
-        name: card.querySelector(".member-name").value,
-        phone: card.querySelector(".member-phone").value,
-        gender: card.querySelector(".member-gender").value,
-        joinDate: card.querySelector(".join-date").value,
-        birthDate: card.querySelector(".member-birthdate").value,
-        mrithi: card.querySelector(".member-mrithi").value,
-        photo: existing.photo || "",
-        
+    const updatedDataLocal = {
         hisaAnzia: (existing.hisaAnzia || 0) + leoHisa,
         afya: (existing.afya || 0) + leoAfya,
         jamii: (existing.jamii || 0) + leoJamii,
@@ -257,19 +248,50 @@ async function processTodayData(memberId) {
         jamiiLipwa: (existing.jamiiLipwa || 0) + leoJamiiLipwa
     };
 
-    // Hifadhi data mpya Supabase (Upsert inahuisha iliyopo au inatengeneza mpya)
+    const payloadSupabase = {
+        id: rawId,
+        name: card.querySelector(".member-name").value,
+        phone: card.querySelector(".member-phone").value,
+        gender: card.querySelector(".member-gender").value,
+        dob: card.querySelector(".member-birthdate").value,
+        guardian: card.querySelector(".member-mrithi").value,
+        photo_url: existing.photo || "",
+        
+        hisa_anzia: updatedDataLocal.hisaAnzia,
+        afya_leo: updatedDataLocal.afya,
+        jamii_leo: updatedDataLocal.jamii,
+        faini_1: updatedDataLocal.faini1,
+        faini_2: updatedDataLocal.faini2,
+        faini_3: updatedDataLocal.faini3,
+        mkopo_hisa_mpya: updatedDataLocal.mkopoHisa,
+        hisa_inayolipwa_leo: updatedDataLocal.hisaLipwa,
+        mkopo_jamii_mpya: updatedDataLocal.mkopoJamii,
+        jamii_inayolipwa_leo: updatedDataLocal.jamiiLipwa,
+        updated_at: new Date().toISOString()
+    };
+
+    // Hifadhi Supabase
     const { error } = await db
         .from("members")
-        .upsert([updatedData]);
+        .upsert([payloadSupabase]);
 
     if (error) {
         alert("Hitilafu wakati wa kuhifadhi Supabase: " + error.message);
         return;
     }
 
-    membersData[memberId] = updatedData;
+    // Sasisha local memory
+    membersData[memberId] = {
+        ...membersData[memberId],
+        ...updatedDataLocal,
+        name: payloadSupabase.name,
+        phone: payloadSupabase.phone,
+        gender: payloadSupabase.gender,
+        birthDate: payloadSupabase.dob,
+        mrithi: payloadSupabase.guardian
+    };
 
-    // Sasisha fomu ya "Hisa Anzia" ionyeshe thamani mpya
+    // Sasisha fomu ya "Hisa Anzia"
     card.querySelector(".hisaAnzia").value = membersData[memberId].hisaAnzia;
 
     // Kusafisha input za leo zirudi kuwa 0
@@ -313,7 +335,7 @@ function calculateMember(card) {
 }
 
 /* =====================================
-   DASHBOARD KUU (Mfumo wa Uhasibu wa Cash Flow)
+   DASHBOARD KUU
 ===================================== */
 function updateDashboard() {
     let rawShares = 0, health = 0, rawCommunity = 0, fines = 0;
@@ -373,8 +395,8 @@ function savePhoto(event, memberId) {
         
         document.getElementById(`photo-${memberId}`).src = photoData;
 
-        // Hifadhi Picha Supabase
-        await db.from("members").upsert([{ id: memberId, photo: photoData }]);
+        const rawId = String(parseInt(memberId, 10));
+        await db.from("members").upsert([{ id: rawId, photo_url: photoData }]);
     };
     reader.readAsDataURL(file);
 }
@@ -388,81 +410,6 @@ function searchMember() {
     });
 }
 
-async function exportExcel() {
-    if (typeof ExcelJS === "undefined") {
-        alert("Maktaba ya ExcelJS haijapatikana!");
-        return;
-    }
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Wanakikundi");
-    const today = new Date().toLocaleDateString("sw-TZ");
-
-    worksheet.mergeCells("A1:T1");
-    worksheet.getCell("A1").value = "SAUTI MOJA VIJANA GROUP HOLILI";
-    worksheet.mergeCells("A2:T2");
-    worksheet.getCell("A2").value = "TAARIFA ZA WANAKIKUNDI";
-    worksheet.mergeCells("A3:T3");
-    worksheet.getCell("A3").value = `TAREHE: ${today}`;
-
-    worksheet.columns = [
-        { header: "ID", key: "id", width: 10 },
-        { header: "Jina", key: "name", width: 30 },
-        { header: "Simu", key: "phone", width: 20 },
-        { header: "Jinsia", key: "gender", width: 15 },
-        { header: "Tarehe ya Kuzaliwa", key: "birthDate", width: 18 },
-        { header: "Jina la Mrithi", key: "mrithi", width: 25 },
-        { header: "Tarehe ya Kujiunga", key: "joinDate", width: 20 },
-        { header: "Jumla Hisa", key: "hisaAnzia", width: 15 },
-        { header: "Afya", key: "afya", width: 12 },
-        { header: "Jamii", key: "jamii", width: 12 },
-        { header: "Faini I", key: "faini1", width: 12 },
-        { header: "Faini II", key: "faini2", width: 12 },
-        { header: "Faini III", key: "faini3", width: 12 },
-        { header: "Mkopo Hisa", key: "mkopoHisa", width: 15 },
-        { header: "Hisa Lipwa", key: "hisaLipwa", width: 15 },
-        { header: "Mkopo Jamii", key: "mkopoJamii", width: 15 },
-        { header: "Jamii Lipwa", key: "jamiiLipwa", width: 15 },
-        { header: "Baki Mkopo Hisa", key: "debtShares", width: 18 },
-        { header: "Baki Mkopo Jamii", key: "debtCommunity", width: 18 },
-        { header: "Jumla ya Deni Kuu", key: "totalDebt", width: 18 }
-    ];
-
-    const headerRow = worksheet.getRow(5);
-    headerRow.values = worksheet.columns.map(c => c.header);
-    headerRow.font = { bold: true, color: { argb: "FFFFFFFF" } };
-    headerRow.alignment = { horizontal: "center" };
-
-    headerRow.eachCell(cell => {
-        cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "2563EB" } };
-    });
-
-    Object.entries(membersData).forEach(([id, m]) => {
-        const debtShares = (m.mkopoHisa || 0) - (m.hisaLipwa || 0);
-        const debtCommunity = (m.mkopoJamii || 0) - (m.jamiiLipwa || 0);
-        const totalDebt = debtShares + debtCommunity;
-
-        worksheet.addRow({
-            id, name: m.name || "", phone: m.phone || "", gender: m.gender || "",
-            birthDate: m.birthDate || "", mrithi: m.mrithi || "", joinDate: m.joinDate || "",
-            hisaAnzia: m.hisaAnzia || 0, afya: m.afya || 0, jamii: m.jamii || 0,
-            faini1: m.faini1 || 0, faini2: m.faini2 || 0, faini3: m.faini3 || 0,
-            mkopoHisa: m.mkopoHisa || 0, hisaLipwa: m.hisaLipwa || 0,
-            mkopoJamii: m.mkopoJamii || 0, jamiiLipwa: m.jamiiLipwa || 0,
-            debtShares, debtCommunity, totalDebt
-        });
-    });
-
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "SAUTI_MOJA_WANAKIKUNDI.xlsx";
-    link.click();
-}
-
-/* =====================================
-   INITIALIZE APP RUNNER
-===================================== */
 function initializeApp() {
     createMembersCards();
     document.querySelectorAll(".member-card").forEach(card => {
@@ -471,5 +418,4 @@ function initializeApp() {
     updateDashboard();
 }
 
-// Mfumo unapoanza, unasoma data kutoka Supabase
 window.addEventListener("DOMContentLoaded", loadMembersFromSupabase);
