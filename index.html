@@ -20,6 +20,25 @@
     
 <body>
 
+    <div id="loginSection" style="max-width: 400px; margin: 50px auto; background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+    <h2 style="text-align: center; color: #1e3a8a; margin-bottom: 20px;">INGIA KWENYE MFUMO</h2>
+    <div style="margin-bottom: 15px;">
+        <label>Namba ya Simu / Jina:</label>
+        <input type="text" id="loginUsername" placeholder="Ingiza namba ya simu" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
+    </div>
+    <div style="margin-bottom: 20px;">
+        <label>Neno la Siri (Password):</label>
+        <input type="password" id="loginPassword" placeholder="sautimoja" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;">
+    </div>
+    <button onclick="handleLogin()" style="width: 100%; background-color: #2563EB; color: white; border: none; padding: 10px; font-weight: bold; border-radius: 5px; cursor: pointer;">INGIA</button>
+</div>
+
+<div id="appSection" style="display: none;">
+    <div style="text-align: right; margin-bottom: 10px;">
+        <span id="currentUserInfo" style="font-weight: bold; margin-right: 15px;"></span>
+        <button onclick="handleLogout()" style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Ondoka (Logout)</button>
+    </div>
+
     <!-- MAIN HEADER WITH GROUP NAME -->
     <header class="main-header">
         <h1>SAUTI MOJA VIJANA GROUP HOLILI</h1>
