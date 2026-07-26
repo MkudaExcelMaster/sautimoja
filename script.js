@@ -5,9 +5,13 @@ const SUPABASE_URL = "https://nkdvoqbbzgjdkvvccbej.supabase.co";
 const SUPABASE_KEY = "sb_publishable__6o1FK6fIdXD9st9G8QJ9w_ZLqH6lxC";
 
 // Hakikisha Supabase Client inaanzishwa salama
-let supabase;
+let db = null;
+
 if (window.supabase) {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    db = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 }
 
 let membersData = {};
@@ -23,7 +27,7 @@ async function loadMembersFromSupabase() {
     try {
         if (!supabase) return initializeApp();
         
-        const { data, error } = await supabase.from('members').select('*');
+        const { data, error } = await db.from('members').select('*');
 
         if (error) throw error;
 
@@ -223,7 +227,7 @@ async function processTodayData(event) {
     };
 
     if (supabase) {
-        const { error } = await supabase.from('members').upsert([payload]);
+        const { error } = await db.from('members').upsert([payload]);
         if (error) {
             alert("Imeshindikana kuhifadhi Supabase: " + error.message);
             return;
