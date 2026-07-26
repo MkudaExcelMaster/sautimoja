@@ -419,3 +419,90 @@ function initializeApp() {
 }
 
 window.addEventListener("DOMContentLoaded", loadMembersFromSupabase);
+
+/* =====================================
+   MFUMO WA LOGIN NA UTAMBULISHO (ROLES)
+===================================== *
+let currentUser = null;
+
+async function handleLogin() {
+    const inputUser = document.getElementById("loginUsername").value.trim();
+    const inputPass = document.getElementById("loginPassword").value.trim();
+
+    if (!inputUser || !inputPass) {
+        alert("Tafadhali ingiza Namba ya simu na Password!");
+        return;
+    }
+
+    try {
+        // Tafuta mwanachama anayefanana na namba ya simu au jina
+        const { data, error } = await db
+            .from("members")
+            .select("*")
+            .or(`phone.eq.${inputUser},name.ilike.%${inputUser}%`);
+
+        if (error || !data || data.length === 0) {
+            alert("Mtumiaji hajapatikana!");
+            return;
+        }
+
+        const user = data[0];
+        const userPassword = user.password || "sautimoja";
+
+        if (inputPass !== userPassword) {
+            alert("Neno la siri (Password) siyo sahihi!");
+            return;
+        }
+
+        // Login Imefanikiwa
+        currentUser = user;
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("appSection").style.display = "block";
+        document.getElementById("currentUserInfo").textContent = `Umeingia kama: ${user.name || 'Mwanakikundi'} (${user.role === 'admin' ? 'ADMIN' : 'MEMBER'})`;
+
+        // Rekebisha Muonekano kulingana na Role
+        applyRolePermissions();
+
+    } catch (err) {
+        alert("Hitilafu wakati wa kuingia: " + err.message);
+    }
+}
+
+function applyRolePermissions() {
+    const isAdmin = currentUser && currentUser.role === "admin";
+
+    // Kama SIYO Admin (ni Member wa kawaida)
+    if (!isAdmin) {
+        // 1. Ficha batani za Admin zote (Export, Backup, Funga Data Zote)
+        document.querySelectorAll(".controls-container button").forEach(btn => btn.style.display = "none");
+        
+        // 2. Onyesha kadi ya mwanachama huyu pekee
+        const userMemberId = String(currentUser.id).padStart(3, "0");
+        document.querySelectorAll(".member-card").forEach(card => {
+            const cardId = card.getAttribute("data-member");
+            if (cardId !== userMemberId) {
+                card.style.display = "none"; // Ficha kadi za wengine
+            } else {
+                card.style.display = "block";
+                // Zuia member asibadilishe taarifa za msingi (Read-only)
+                card.querySelectorAll("input, select").forEach(input => {
+                    if (!input.classList.contains("hisaWiki") && 
+                        !input.classList.contains("afya") && 
+                        !input.classList.contains("jamii")) {
+                        input.disabled = true;
+                    }
+                });
+            }
+        });
+    } else {
+        // Kama NI Admin: Onyesha kadi zote na vianzo vyote vya kuhariri
+        document.querySelectorAll(".member-card").forEach(card => card.style.display = "block");
+        document.querySelectorAll(".controls-container button").forEach(btn => btn.style.display = "inline-block");
+    }
+}
+
+function handleLogout() {
+    currentUser = null;
+    document.getElementById("loginSection").style.display = "block";
+    document.getElementById("appSection").style.display = "none";
+}
