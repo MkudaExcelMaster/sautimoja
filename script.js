@@ -6,7 +6,7 @@ const SUPABASE_KEY = "sb_publishable__6o1FK6fIdXD9st9G8QJ9w_ZLqH6lxC";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const membersContainer = document.getElementById("membersContainer");
-let membersData = JSON.parse(localStorage.getItem("membersData")) || {};
+let membersData = {};
 
 /* =====================================
    FORMAT NUMBER
@@ -16,65 +16,57 @@ function formatNumber(value) {
 }
 
 /* =====================================
-   LOAD MEMBERS FROM EXCEL (wanakikundi.xlsx)
-==================================== */
-async function loadMembersFromExcel() {
-    // Kama tayari kuna data kwenye localStorage, tunaruka kusoma Excel ili kuzuia overwrite
-    if (Object.keys(membersData).length > 0) {
-        initializeApp();
-        return;
-    }
-
+   LOAD MEMBERS FROM SUPABASE (Database)
+===================================== */
+async function loadMembersFromSupabase() {
     try {
-        // Soma faili la Excel lililopo kwenye folda moja na system files
-        const response = await fetch("wanakikundi.xlsx");
-        if (!response.ok) throw new Error("Faili la wanakikundi.xlsx halijapatikana kwenye folda husika.");
+        console.log("Inapakua data kutoka Supabase...");
         
-        const arrayBuffer = await response.arrayBuffer();
+        // Kuvuta data zote kutoka table ya 'members'
+        const { data, error } = await db
+            .from("members")
+            .select("*");
 
-        if (typeof XLSX === "undefined") {
-            console.error("Maktaba ya SheetJS (XLSX) haijapakiwa kwenye index.html!");
-            initializeApp();
-            return;
+        if (error) {
+            throw error;
         }
 
-        const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: "array" });
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-        
-        // Geuza rows zote kuwa Array ya Objects
-        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+        membersData = {};
 
-        jsonData.forEach(row => {
-            // MABORESHO: Kusoma headers zako hasa kama zilivyo (ID, JINA, SIMU...)
-            const rawId = row["ID"] || row["id"];
-            if (!rawId) return;
-            
-            // Format ID iwe tarakimu 3 mfano "001"
-            const memberId = String(rawId).padStart(3, "0");
+        if (data && data.length > 0) {
+            data.forEach(row => {
+                const memberId = String(row.id).padStart(3, "0");
+                membersData[memberId] = {
+                    name: row.name || "",
+                    phone: row.phone || "",
+                    gender: row.gender || "",
+                    joinDate: row.joinDate || "",
+                    birthDate: row.birthDate || "",
+                    mrithi: row.mrithi || "",
+                    photo: row.photo || "",
 
-            membersData[memberId] = {
-                name: row["JINA"] || row["Jina"] || "",
-                phone: row["SIMU"] || row["Simu"] || "",
-                gender: row["JINSIA"] || row["Jinsia"] || "", 
-                joinDate: row["TAREHE YA KUJIUNGA"] || "",      
-                birthDate: row["TAREHE YA KUZALIWA"] || "",
-                mrithi: row["JINA LA MRITHI"] || "",
-                photo: "",
+                    hisaAnzia: Number(row.hisaAnzia || 0),
+                    afya: Number(row.afya || 0),
+                    jamii: Number(row.jamii || 0),
+                    faini1: Number(row.faini1 || 0),
+                    faini2: Number(row.faini2 || 0),
+                    faini3: Number(row.faini3 || 0),
+                    mkopoHisa: Number(row.mkopoHisa || 0),
+                    hisaLipwa: Number(row.hisaLipwa || 0),
+                    mkopoJamii: Number(row.mkopoJamii || 0),
+                    jamiiLipwa: Number(row.jamiiLipwa || 0)
+                };
+            });
+            console.log("Data za Supabase zimepakiwa kikamilifu!");
+        } else {
+            console.warn("Hakuna data kwenye Supabase bado.");
+        }
 
-                // Anzisha hesabu za fedha zikiwa 0
-                hisaAnzia: 0, afya: 0, jamii: 0, faini1: 0, faini2: 0, faini3: 0,
-                mkopoHisa: 0, hisaLipwa: 0, mkopoJamii: 0, jamiiLipwa: 0
-            };
-        });
-
-        // Hifadhi data zilizopatikana kwenye LocalStorage ya kivinjari
-        localStorage.setItem("membersData", JSON.stringify(membersData));
-        console.log("Data za Excel zimepakiwa kikamilifu kulingana na muundo wako!");
         initializeApp();
 
     } catch (error) {
-        console.warn("Ilani: " + error.message + " Mfumo unafungua data tupu.");
+        console.error("Hitilafu wakati wa kusoma Supabase:", error.message);
+        alert("Imeshindwa kuvuta data kutoka mtandaoni: " + error.message);
         initializeApp();
     }
 }
@@ -94,7 +86,6 @@ function createMembersCards() {
         card.className = "member-card";
         card.setAttribute("data-member", memberId);
 
-        // Logic ya kushughulikia picha isipokuwepo (weka picha tupu au avatar)
         const imageSrc = data.photo ? data.photo : "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23ccc'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
         card.innerHTML = `
@@ -151,7 +142,7 @@ function createMembersCards() {
                     <div><label>Mkopo Jamii Mpya (+)</label><input type="number" class="mkopoJamii" value="0"></div>
                     <div><label>Jamii Inayolipwa Leo (+)</label><input type="number" class="jamiiLipwa" value="0"></div>
                 </div>
-                <button class="save-member" style="background-color: #10B981; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px; margin-top: 10px; width: 100%;">💾 Funga & Fanya Mabadiliko ya Leo</button>
+                <button class="save-member" style="background-color: #10B981; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px; margin-top: 10px; width: 100%;">💾 Funga & Hifadhi Supabase</button>
             </div>
         </div>`;
 
@@ -189,7 +180,10 @@ membersContainer.addEventListener("click", (event) => {
     }
 });
 
-function saveBasicInfo(card) {
+/* =====================================
+   SAVE BASIC INFO TO SUPABASE
+===================================== */
+async function saveBasicInfo(card) {
     const memberId = card.getAttribute("data-member");
     if (!membersData[memberId]) membersData[memberId] = {};
 
@@ -200,13 +194,28 @@ function saveBasicInfo(card) {
     membersData[memberId].birthDate = card.querySelector(".member-birthdate").value;
     membersData[memberId].mrithi = card.querySelector(".member-mrithi").value;
 
-    localStorage.setItem("membersData", JSON.stringify(membersData));
+    // Hifadhi Taarifa za Msingi Supabase
+    const { error } = await db
+        .from("members")
+        .upsert([{
+            id: memberId,
+            name: membersData[memberId].name,
+            phone: membersData[memberId].phone,
+            gender: membersData[memberId].gender,
+            joinDate: membersData[memberId].joinDate,
+            birthDate: membersData[memberId].birthDate,
+            mrithi: membersData[memberId].mrithi
+        }]);
+
+    if (error) {
+        console.error("Supabase Save Error:", error.message);
+    }
 }
 
 /* =====================================
-   PROCESS TODAY'S DATA
+   PROCESS TODAY'S DATA & SAVE TO SUPABASE
 ===================================== */
-function processTodayData(memberId) {
+async function processTodayData(memberId) {
     const card = document.querySelector(`[data-member="${memberId}"]`);
     if (!card) return;
 
@@ -226,14 +235,15 @@ function processTodayData(memberId) {
     const leoMkopoJamii = Number(card.querySelector(".mkopoJamii").value || 0);
     const leoJamiiLipwa = Number(card.querySelector(".jamiiLipwa").value || 0);
 
-    membersData[memberId] = {
-        ...existing,
+    const updatedData = {
+        id: memberId,
         name: card.querySelector(".member-name").value,
         phone: card.querySelector(".member-phone").value,
         gender: card.querySelector(".member-gender").value,
         joinDate: card.querySelector(".join-date").value,
         birthDate: card.querySelector(".member-birthdate").value,
         mrithi: card.querySelector(".member-mrithi").value,
+        photo: existing.photo || "",
         
         hisaAnzia: (existing.hisaAnzia || 0) + leoHisa,
         afya: (existing.afya || 0) + leoAfya,
@@ -247,7 +257,17 @@ function processTodayData(memberId) {
         jamiiLipwa: (existing.jamiiLipwa || 0) + leoJamiiLipwa
     };
 
-    localStorage.setItem("membersData", JSON.stringify(membersData));
+    // Hifadhi data mpya Supabase (Upsert inahuisha iliyopo au inatengeneza mpya)
+    const { error } = await db
+        .from("members")
+        .upsert([updatedData]);
+
+    if (error) {
+        alert("Hitilafu wakati wa kuhifadhi Supabase: " + error.message);
+        return;
+    }
+
+    membersData[memberId] = updatedData;
 
     // Sasisha fomu ya "Hisa Anzia" ionyeshe thamani mpya
     card.querySelector(".hisaAnzia").value = membersData[memberId].hisaAnzia;
@@ -258,7 +278,7 @@ function processTodayData(memberId) {
     calculateMember(card);
     updateDashboard();
 
-    alert(`Mabadiliko ya Mwanakikundi ${memberId} yamefungwa!`);
+    alert(`Mabadiliko ya Mwanakikundi ${memberId} yamehifadhiwa mtandaoni (Supabase)!`);
 }
 
 /* =====================================
@@ -310,7 +330,6 @@ function updateDashboard() {
         communityPaid += (m.jamiiLipwa || 0);
     });
 
-    // MABORESHO YA CASH FLOW:
     const activeShares = (rawShares + sharesPaid) - loanShares;
     const activeCommunity = (rawCommunity + communityPaid) - loanCommunity;
 
@@ -343,40 +362,19 @@ function updateDashboard() {
     setDash("totalDebt", totalDebt);
 }
 
-function saveAllData() {
-    document.querySelectorAll(".member-card").forEach(card => {
-        const memberId = card.getAttribute("data-member");
-        const inputHisa = Number(card.querySelector(".hisaWiki").value || 0);
-        const inputAfya = Number(card.querySelector(".afya").value || 0);
-        const inputJamii = Number(card.querySelector(".jamii").value || 0);
-        const inputFaini1 = Number(card.querySelector(".faini1").value || 0);
-        const inputFaini2 = Number(card.querySelector(".faini2").value || 0);
-        const inputFaini3 = Number(card.querySelector(".faini3").value || 0);
-        const inputMkopoHisa = Number(card.querySelector(".mkopoHisa").value || 0);
-        const inputHisaLipwa = Number(card.querySelector(".hisaLipwa").value || 0);
-        const inputMkopoJamii = Number(card.querySelector(".mkopoJamii").value || 0);
-        const inputJamiiLipwa = Number(card.querySelector(".jamiiLipwa").value || 0);
-
-        if(inputHisa > 0 || inputAfya > 0 || inputJamii > 0 || inputFaini1 > 0 || inputFaini2 > 0 || inputFaini3 > 0 || inputMkopoHisa > 0 || inputHisaLipwa > 0 || inputMkopoJamii > 0 || inputJamiiLipwa > 0) {
-            processTodayData(memberId);
-        }
-    });
-    alert("Data zote zilizoingizwa leo zimefungwa rasmi!");
-}
-
 function savePhoto(event, memberId) {
     const file = event.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = async function(e) {
         if (!membersData[memberId]) membersData[memberId] = {};
-        try {
-            membersData[memberId].photo = e.target.result;
-            localStorage.setItem("membersData", JSON.stringify(membersData));
-            document.getElementById(`photo-${memberId}`).src = e.target.result;
-        } catch (error) {
-            alert("LocalStorage imejaa! Picha hii ni kubwa mno.");
-        }
+        const photoData = e.target.result;
+        membersData[memberId].photo = photoData;
+        
+        document.getElementById(`photo-${memberId}`).src = photoData;
+
+        // Hifadhi Picha Supabase
+        await db.from("members").upsert([{ id: memberId, photo: photoData }]);
     };
     reader.readAsDataURL(file);
 }
@@ -388,34 +386,6 @@ function searchMember() {
         const name = card.querySelector(".member-name").value.toLowerCase();
         card.style.display = id.includes(search) || name.includes(search) ? "block" : "none";
     });
-}
-
-function backupData() {
-    const data = JSON.stringify(membersData, null, 2);
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "SAUTI_MOJA_BACKUP.json";
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-function restoreData(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            membersData = JSON.parse(e.target.result);
-            localStorage.setItem("membersData", JSON.stringify(membersData));
-            alert("Backup imerudishwa. Mfumo uta-refresh.");
-            location.reload();
-        } catch (error) {
-            alert("Faili si sahihi.");
-        }
-    };
-    reader.readAsText(file);
 }
 
 async function exportExcel() {
@@ -495,12 +465,11 @@ async function exportExcel() {
 ===================================== */
 function initializeApp() {
     createMembersCards();
-    // MABORESHO: Tunapiga hesabu kadi zote baada ya fomu kuandaliwa vizuri kwenye DOM
     document.querySelectorAll(".member-card").forEach(card => {
         calculateMember(card);
     });
     updateDashboard();
 }
 
-// Mfumo unaanza kwa kusoma faili la Excel kwanza
-window.addEventListener("DOMContentLoaded", loadMembersFromExcel);
+// Mfumo unapoanza, unasoma data kutoka Supabase
+window.addEventListener("DOMContentLoaded", loadMembersFromSupabase);
