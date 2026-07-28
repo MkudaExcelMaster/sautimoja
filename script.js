@@ -156,43 +156,6 @@ function createMembersCards() {
     membersContainer.appendChild(fragment);
 }
 
-            <div class="member-summary">
-                <div class="member-results">
-                    <h3>MATOKEO YA MWANACHAMA (JUMLA KUU)</h3>
-                    <div class="results-grid">
-                        <div class="result-item"><span>Jumla ya Hisa</span><strong class="resultTotalShares">0</strong></div>
-                        <div class="result-item"><span>Jumla ya Afya</span><strong class="resultHealth">0</strong></div>
-                        <div class="result-item"><span>Jumla ya Jamii</span><strong class="resultCommunity">0</strong></div>
-                        <div class="result-item"><span>Jumla ya Faini</span><strong class="resultFines">0</strong></div>
-                        <div class="result-item"><span>Baki Mkopo Hisa</span><strong class="resultDebtShares">0</strong></div>
-                        <div class="result-item"><span>Baki Mkopo Jamii</span><strong class="resultDebtCommunity">0</strong></div>
-                        <div class="result-item"><span>Jumla Mikopo</span><strong class="resultLoans">0</strong></div>
-                        <div class="result-item"><span>Jumla Iliyolipwa</span><strong class="resultPaid">0</strong></div>
-                        <div class="result-item"><span>Jumla Madeni</span><strong class="resultDebt">0</strong></div>
-                    </div>
-
-                    <h4 style="margin-top:15px; color:#2563EB;">INGIZA DATA ZA LEO / WIKI HII:</h4>
-                    <div class="grid">
-                        <div><label>Hisa Anzia (Jumla)</label><input type="number" class="hisaAnzia" value="${data.hisaAnzia || 0}" disabled></div>
-                        <div><label>Hisa ya Leo (+)</label><input type="number" class="hisaWiki" value="0"></div>
-                        <div><label>Afya ya Leo (+)</label><input type="number" class="afya" value="0"></div>
-                        <div><label>Jamii ya Leo (+)</label><input type="number" class="jamii" value="0"></div>
-                        <div><label>Faini I (+)</label><input type="number" class="faini1" value="0"></div>
-                        <div><label>Faini II (+)</label><input type="number" class="faini2" value="0"></div>
-                        <div><label>Faini III (+)</label><input type="number" class="faini3" value="0"></div>
-                        <div><label>Mkopo Hisa Mpya (+)</label><input type="number" class="mkopoHisa" value="0"></div>
-                        <div><label>Hisa Inayolipwa Leo (+)</label><input type="number" class="hisaLipwa" value="0"></div>
-                        <div><label>Mkopo Jamii Mpya (+)</label><input type="number" class="mkopoJamii" value="0"></div>
-                        <div><label>Jamii Inayolipwa Leo (+)</label><input type="number" class="jamiiLipwa" value="0"></div>
-                    </div>
-                    <button class="save-member" style="background-color: #10B981; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px; margin-top: 10px; width: 100%;">💾 Funga & Hifadhi Supabase</button>
-                </div>
-            </div>`;
-
-        fragment.appendChild(card);
-    }
-    membersContainer.appendChild(fragment);
-}
 /* =====================================
    EVENT DELEGATION
 ===================================== */
@@ -233,7 +196,9 @@ async function saveBasicInfo(card) {
     membersData[memberId].name = card.querySelector(".member-name").value;
     membersData[memberId].phone = card.querySelector(".member-phone").value;
     membersData[memberId].gender = card.querySelector(".member-gender").value;
-    membersData[memberId].birthDate = card.querySelector(".member-birthdate").value;
+    
+    const dobValue = card.querySelector(".member-birthdate").value;
+    membersData[memberId].birthDate = dobValue;
     membersData[memberId].mrithi = card.querySelector(".member-mrithi").value;
 
     const { error } = await db
@@ -243,7 +208,7 @@ async function saveBasicInfo(card) {
             name: membersData[memberId].name,
             phone: membersData[memberId].phone,
             gender: membersData[memberId].gender,
-            dob: membersData[memberId].birthDate,
+            dob: dobValue ? dobValue : null, // Zuia kosa la string tupu ""
             guardian: membersData[memberId].mrithi
         }]);
 
@@ -290,12 +255,14 @@ async function processTodayData(memberId) {
         jamiiLipwa: (existing.jamiiLipwa || 0) + leoJamiiLipwa
     };
 
+    const dobValue = card.querySelector(".member-birthdate").value;
+
     const payloadSupabase = {
         id: rawId,
         name: card.querySelector(".member-name").value,
         phone: card.querySelector(".member-phone").value,
         gender: card.querySelector(".member-gender").value,
-        dob: card.querySelector(".member-birthdate").value,
+        dob: dobValue ? dobValue : null, // Zuia tarehe kuleta error 400
         guardian: card.querySelector(".member-mrithi").value,
         photo_url: existing.photo || "",
         
@@ -577,7 +544,7 @@ async function saveAllData() {
             const name = card.querySelector(".member-name")?.value || "";
             const phone = card.querySelector(".member-phone")?.value || "";
             const gender = card.querySelector(".member-gender")?.value || "";
-            let dob = card.querySelector(".member-dob")?.value || null;
+            let dob = card.querySelector(".member-birthdate")?.value || null;
             if (dob === "") dob = null; // Zuia Error ya Invalid Date Syntax
 
             const guardian = card.querySelector(".member-mrithi")?.value || "";
@@ -589,10 +556,10 @@ async function saveAllData() {
             const faini1 = Number(card.querySelector(".faini1")?.value || 0);
             const faini2 = Number(card.querySelector(".faini2")?.value || 0);
             const faini3 = Number(card.querySelector(".faini3")?.value || 0);
-            const mkopoHisaMpya = Number(card.querySelector(".mkopoHisaMpya")?.value || 0);
-            const hisaInayolipwaLeo = Number(card.querySelector(".hisaInayolipwaLeo")?.value || 0);
-            const mkopoJamiiMpya = Number(card.querySelector(".mkopoJamiiMpya")?.value || 0);
-            const jamiiInayolipwaLeo = Number(card.querySelector(".jamiiInayolipwaLeo")?.value || 0);
+            const mkopoHisaMpya = Number(card.querySelector(".mkopoHisa")?.value || 0);
+            const hisaInayolipwaLeo = Number(card.querySelector(".hisaLipwa")?.value || 0);
+            const mkopoJamiiMpya = Number(card.querySelector(".mkopoJamii")?.value || 0);
+            const jamiiInayolipwaLeo = Number(card.querySelector(".jamiiLipwa")?.value || 0);
 
             const { error } = await db.from("members").upsert({
                 id: parseInt(memberId, 10),
@@ -664,10 +631,10 @@ async function exportExcel() {
             const f1 = Number(card.querySelector(".faini1")?.value || 0);
             const f2 = Number(card.querySelector(".faini2")?.value || 0);
             const f3 = Number(card.querySelector(".faini3")?.value || 0);
-            const mkopoHisa = Number(card.querySelector(".mkopoHisaMpya")?.value || 0);
-            const hisaLipwa = Number(card.querySelector(".hisaInayolipwaLeo")?.value || 0);
-            const mkopoJamii = Number(card.querySelector(".mkopoJamiiMpya")?.value || 0);
-            const jamiiLipwa = Number(card.querySelector(".jamiiInayolipwaLeo")?.value || 0);
+            const mkopoHisa = Number(card.querySelector(".mkopoHisa")?.value || 0);
+            const hisaLipwa = Number(card.querySelector(".hisaLipwa")?.value || 0);
+            const mkopoJamii = Number(card.querySelector(".mkopoJamii")?.value || 0);
+            const jamiiLipwa = Number(card.querySelector(".jamiiLipwa")?.value || 0);
 
             worksheet.addRow({
                 id: memberId,
