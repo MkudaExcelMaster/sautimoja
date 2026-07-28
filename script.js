@@ -111,6 +111,24 @@ function createMembersCards() {
                 </div>
                 <input type="file" class="member-photo-input" accept="image/*" style="margin-top:5px;">
             </div>
+            // A. Format tarehe kwanza kabla ya kutengeneza HTML
+const formattedDob = data.dob ? String(data.dob).split('T')[0] : '';
+
+// B. Weka `formattedDob` moja kwa moja ndani ya input value
+card.innerHTML = `
+    <div class="member-card">
+        <h3>${data.name}</h3>
+        
+        <input type="date" 
+               id="dob-${data.id}" 
+               class="member-birthdate" 
+               value="${formattedDob}">
+               
+        <!-- Data zingine... -->
+    </div>
+`;
+
+membersContainer.appendChild(card);
         </div>
 
         <div class="member-summary">
