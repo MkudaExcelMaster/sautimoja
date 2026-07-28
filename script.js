@@ -89,7 +89,7 @@ function createMembersCards() {
             ? data.photo 
             : "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23ccc'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
-        // Kurekebisha Format za Tarehe (ISO string -> YYYY-MM-DD)
+        // Format Tarehe (ISO timestamp -> YYYY-MM-DD)
         const formattedJoinDate = data.joinDate ? String(data.joinDate).split('T')[0] : '';
         const formattedBirthDate = data.birthDate ? String(data.birthDate).split('T')[0] : '';
 
@@ -117,6 +117,44 @@ function createMembersCards() {
                     <input type="file" class="member-photo-input" accept="image/*" style="margin-top:5px;">
                 </div>
             </div>
+
+            <div class="member-summary">
+                <div class="member-results">
+                    <h3>MATOKEO YA MWANACHAMA (JUMLA KUU)</h3>
+                    <div class="results-grid">
+                        <div class="result-item"><span>Jumla ya Hisa</span><strong class="resultTotalShares">0</strong></div>
+                        <div class="result-item"><span>Jumla ya Afya</span><strong class="resultHealth">0</strong></div>
+                        <div class="result-item"><span>Jumla ya Jamii</span><strong class="resultCommunity">0</strong></div>
+                        <div class="result-item"><span>Jumla ya Faini</span><strong class="resultFines">0</strong></div>
+                        <div class="result-item"><span>Baki Mkopo Hisa</span><strong class="resultDebtShares">0</strong></div>
+                        <div class="result-item"><span>Baki Mkopo Jamii</span><strong class="resultDebtCommunity">0</strong></div>
+                        <div class="result-item"><span>Jumla Mikopo</span><strong class="resultLoans">0</strong></div>
+                        <div class="result-item"><span>Jumla Iliyolipwa</span><strong class="resultPaid">0</strong></div>
+                        <div class="result-item"><span>Jumla Madeni</span><strong class="resultDebt">0</strong></div>
+                    </div>
+
+                    <h4 style="margin-top:15px; color:#2563EB;">INGIZA DATA ZA LEO / WIKI HII:</h4>
+                    <div class="grid">
+                        <div><label>Hisa Anzia (Jumla)</label><input type="number" class="hisaAnzia" value="${data.hisaAnzia || 0}" disabled></div>
+                        <div><label>Hisa ya Leo (+)</label><input type="number" class="hisaWiki" value="0"></div>
+                        <div><label>Afya ya Leo (+)</label><input type="number" class="afya" value="0"></div>
+                        <div><label>Jamii ya Leo (+)</label><input type="number" class="jamii" value="0"></div>
+                        <div><label>Faini I (+)</label><input type="number" class="faini1" value="0"></div>
+                        <div><label>Faini II (+)</label><input type="number" class="faini2" value="0"></div>
+                        <div><label>Faini III (+)</label><input type="number" class="faini3" value="0"></div>
+                        <div><label>Mkopo Hisa Mpya (+)</label><input type="number" class="mkopoHisa" value="0"></div>
+                        <div><label>Hisa Inayolipwa Leo (+)</label><input type="number" class="hisaLipwa" value="0"></div>
+                        <div><label>Mkopo Jamii Mpya (+)</label><input type="number" class="mkopoJamii" value="0"></div>
+                        <div><label>Jamii Inayolipwa Leo (+)</label><input type="number" class="jamiiLipwa" value="0"></div>
+                    </div>
+                    <button class="save-member" style="background-color: #10B981; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px; margin-top: 10px; width: 100%;">💾 Funga & Hifadhi Supabase</button>
+                </div>
+            </div>`;
+
+        fragment.appendChild(card);
+    }
+    membersContainer.appendChild(fragment);
+}
 
             <div class="member-summary">
                 <div class="member-results">
