@@ -484,59 +484,59 @@ async function handleLogin() {
         }
 }
 
-function applyRolePermissions(){
+function applyRolePermissions() {
     const isAdmin = currentUser && currentUser.role === "admin";
     const searchInput = document.getElementById("searchMember");
-   const dashboardSection = document.querySelector(".dashboard") || document.getElementById("dashboard");
+    
+    // Njia sahihi ya kuipata Dashboard Kuu pekee
+    const dashboardSection = document.querySelector(".dashboard-container");
 
     if (!isAdmin) {
-        // 1. Ficha batani zote za Admin (Export, Backup, Funga Data)
+        // 1. Ficha Dashboard Kuu kwa Member
+        if (dashboardSection) {
+            dashboardSection.style.display = "none";
+        }
+
+        // 2. Ficha batani zote za Admin (Export, Backup, Funga Data)
         document.querySelectorAll(".controls-container button").forEach(btn => btn.style.display = "none");
         
-        // 2. Kuzuia na kulemaza kisanduku cha Search kwa Member
+        // 3. Kuzuia na kulemaza kisanduku cha Search kwa Member
         if (searchInput) {
             searchInput.value = "";
             searchInput.disabled = true;
             searchInput.placeholder = "Kutafuta kumeruhusiwa kwa Admin pekee";
         }
 
-         if (dashboardSection) {
-    dashboardSection.style.display = "none";
-}  
-
-        // 3. Weka format ya ID ya Mwanachama
+        // 4. Weka format ya ID ya Mwanachama
         const formattedIdWithZeros = String(currentUser.id).padStart(3, "0");
         const rawIdString = String(currentUser.id);
 
-        // 4. Onyesha kadi ya mwanachama pekee na kulemaza (Disable) inputs zote
+        // 5. Onyesha kadi ya mwanachama pekee na kulemaza inputs zote
         document.querySelectorAll(".member-card").forEach(card => {
             const cardId = card.getAttribute("data-member");
             
             if (cardId === formattedIdWithZeros || cardId === rawIdString) {
-                card.style.display = "block"; // Onyesha kadi yake pekee
-                
-                // Zuia Member asibadilishe au kuandika kitu chochote (Read-only total)
+                card.style.display = "block";
                 card.querySelectorAll("input, select, textarea, button").forEach(element => {
                     element.disabled = true;
                 });
             } else {
-                card.style.display = "none"; // Ficha kadi za wengine
+                card.style.display = "none";
             }
         });
     } else {
-        // Kama ni Admin: Ruhusu Search na onyesha kadi zote
+        // Kama ni Admin: Onyesha Dashboard Kuu
+        if (dashboardSection) {
+            dashboardSection.style.display = "block";
+        }
+
         if (searchInput) {
             searchInput.disabled = false;
             searchInput.placeholder = "Tafuta Mwanachama...";
         }
 
-       if (dashboardSection) {
-    dashboardSection.style.display = "block";
-}
-
         document.querySelectorAll(".member-card").forEach(card => {
             card.style.display = "block";
-            // Ruhusu uandishi/mabadiliko kwa Admin
             card.querySelectorAll("input, select, textarea, button").forEach(element => element.disabled = false);
         });
 
