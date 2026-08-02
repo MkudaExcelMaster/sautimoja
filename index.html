@@ -47,7 +47,7 @@
         <p class="subtitle">Mfumo wa Kusimamia Hisa, Afya, Jamii, Faini na Mikopo ya Wanakikundi</p>
     </header>
 
-    <!-- SECTION YA DASHBOARD KUU -->
+<!-- SECTION YA DASHBOARD KUU -->
     <div class="dashboard-container">
         <h2>DASHBOARD YA UHASEBU (CASH FLOW)</h2>
         <div class="dashboard-grid">
@@ -65,16 +65,17 @@
             <div class="dash-card"><span>Jumla Iliyolipwa</span><strong id="totalPaidLoans">0</strong></div>
             <div class="dash-card"><span>Jumla Madeni</span><strong id="totalDebt">0</strong></div>
         </div>
+    </div>
 
-        <!-- Zana za Mfumo (Buttons & Search) -->
-        <div class="controls-container" style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-            <input type="text" id="searchMember" placeholder="Tafuta Mwanakikundi..." oninput="searchMember()" style="padding: 8px; flex: 1;">
-            <button onclick="saveAllData()" style="background-color: #2563EB; color: white; border: none; padding: 8px 15px; cursor: pointer;">💾 Funga Data Zote za Leo</button>
-            <button onclick="exportExcel()" style="background-color: #059669; color: white; border: none; padding: 8px 15px; cursor: pointer;">📥 Export Excel</button>
-            <button onclick="backupData()" style="background-color: #4B5563; color: white; border: none; padding: 8px 15px; cursor: pointer;">📦 Backup JSON</button>
-            <input type="file" id="restoreFile" accept=".json" onchange="restoreData(event)" style="display: none;">
-            <button onclick="document.getElementById('restoreFile').click()" style="background-color: #DC2626; color: white; border: none; padding: 8px 15px; cursor: pointer;">📤 Restore Backup</button>
-        </div>
+    <!-- Zana za Mfumo (Buttons & Search) - Weka hapa nje ya dashboard-container -->
+    <div class="controls-container" style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <input type="text" id="searchMember" placeholder="Tafuta Mwanakikundi..." oninput="searchMember()" style="padding: 8px; flex: 1;">
+        <button onclick="saveAllData()" style="background-color: #2563EB; color: white; border: none; padding: 8px 15px; cursor: pointer;">💾 Funga Data Zote za Leo</button>
+        <button onclick="exportExcel()" style="background-color: #059669; color: white; border: none; padding: 8px 15px; cursor: pointer;">📥 Export Excel</button>
+        <button onclick="backupData()" style="background-color: #4B5563; color: white; border: none; padding: 8px 15px; cursor: pointer;">📦 Backup JSON</button>
+        <input type="file" id="restoreFile" accept=".json" onchange="restoreData(event)" style="display: none;">
+        <button onclick="document.getElementById('restoreFile').click()" style="background-color: #DC2626; color: white; border: none; padding: 8px 15px; cursor: pointer;">📤 Restore Backup</button>
+    </div>
     </div>
 
     <hr style="margin: 20px 0;">
