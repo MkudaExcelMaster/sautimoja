@@ -481,7 +481,7 @@ async function handleLogin() {
 
     } catch (err) {
         alert("Hitilafu wakati wa kuingia: " + err.message);
-}
+        }
 }
 
 function applyRolePermissions(){
@@ -532,6 +532,7 @@ function applyRolePermissions(){
         });
 
         document.querySelectorAll(".controls-container button").forEach(btn => btn.style.display = "inline-block");
+    }
 }
 
 function handleLogout() {
