@@ -411,10 +411,19 @@ function savePhoto(event, memberId) {
 }
 
 function searchMember() {
-    const search = document.getElementById("searchMember").value.toLowerCase();
+    // Kagua ikiwa mtumiaji aliyeingia ni Admin
+    const isAdmin = currentUser && currentUser.role === "admin";
+    if (!isAdmin) return; // Kama siyo Admin, search haifanyi kazi
+
+    const searchInput = document.getElementById("searchMember");
+    if (!searchInput) return;
+
+    const search = searchInput.value.toLowerCase();
     document.querySelectorAll(".member-card").forEach(card => {
-        const id = card.getAttribute("data-member").toLowerCase();
-        const name = card.querySelector(".member-name").value.toLowerCase();
+        const id = card.getAttribute("data-member") ? card.getAttribute("data-member").toLowerCase() : "";
+        const nameInput = card.querySelector(".member-name");
+        const name = nameInput ? nameInput.value.toLowerCase() : "";
+        
         card.style.display = id.includes(search) || name.includes(search) ? "block" : "none";
     });
 }
@@ -481,46 +490,53 @@ async function handleLogin() {
     }
 }
 
-function applyRolePermissions() {
+function applyRolePermissions(){
     const isAdmin = currentUser && currentUser.role === "admin";
+    const searchInput = document.getElementById("searchMember");
 
     if (!isAdmin) {
-        // 1. Ficha batani za Admin zote (Export, Backup, Funga Data)
+        // 1. Ficha batani zote za Admin (Export, Backup, Funga Data)
         document.querySelectorAll(".controls-container button").forEach(btn => btn.style.display = "none");
         
-        // 2. Format ID za kutafuta (Mfano: "001" na "1")
+        // 2. Kuzuia na kulemaza kisanduku cha Search kwa Member
+        if (searchInput) {
+            searchInput.value = "";
+            searchInput.disabled = true;
+            searchInput.placeholder = "Kutafuta kumeruhusiwa kwa Admin pekee";
+        }
+
+        // 3. Weka format ya ID ya Mwanachama
         const formattedIdWithZeros = String(currentUser.id).padStart(3, "0");
         const rawIdString = String(currentUser.id);
 
-        // 3. Tafuta kadi inayohusika
+        // 4. Onyesha kadi ya mwanachama pekee na kulemaza (Disable) inputs zote
         document.querySelectorAll(".member-card").forEach(card => {
             const cardId = card.getAttribute("data-member");
             
-            // Kulinganisha ID zote mbili
             if (cardId === formattedIdWithZeros || cardId === rawIdString) {
                 card.style.display = "block"; // Onyesha kadi yake pekee
-
-               // 2. Zuia kisanduku cha Search kisifanye kazi kwa Member
-        if (searchInput) {
-            searchInput.disabled = true;
-            searchInput.placeholder = "Kutafuta kumeruhusiwa kwa Admin pekee";
-           }
                 
-// Zuia member asibadilishe taarifa YOYOTE (Read-only kwa masanduku yote)
+                // Zuia Member asibadilishe au kuandika kitu chochote (Read-only total)
                 card.querySelectorAll("input, select, textarea, button").forEach(element => {
                     element.disabled = true;
                 });
             } else {
-                card.style.display = "none"; // Ficha kadi za wanachama wengine
+                card.style.display = "none"; // Ficha kadi za wengine
             }
         });
     } else {
-        // Kama ni Admin: Onyesha kadi zote na batani zote za mfumo
+        // Kama ni Admin: Ruhusu Search na onyesha kadi zote
+        if (searchInput) {
+            searchInput.disabled = false;
+            searchInput.placeholder = "Tafuta Mwanachama...";
+        }
+
         document.querySelectorAll(".member-card").forEach(card => {
             card.style.display = "block";
-            // Kagua ili kuondoa disable kwenye masanduku yote kwa Admin
-            card.querySelectorAll("input, select").forEach(input => input.disabled = false);
+            // Ruhusu uandishi/mabadiliko kwa Admin
+            card.querySelectorAll("input, select, textarea, button").forEach(element => element.disabled = false);
         });
+
         document.querySelectorAll(".controls-container button").forEach(btn => btn.style.display = "inline-block");
     }
 }
