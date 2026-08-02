@@ -499,14 +499,16 @@ function applyRolePermissions() {
             // Kulinganisha ID zote mbili
             if (cardId === formattedIdWithZeros || cardId === rawIdString) {
                 card.style.display = "block"; // Onyesha kadi yake pekee
+
+               // 2. Zuia kisanduku cha Search kisifanye kazi kwa Member
+        if (searchInput) {
+            searchInput.disabled = true;
+            searchInput.placeholder = "Kutafuta kumeruhusiwa kwa Admin pekee";
+           }
                 
-                // Zuia member asibadilishe taarifa zake za msingi (Read-only)
-                card.querySelectorAll("input, select").forEach(input => {
-                    if (!input.classList.contains("hisaWiki") && 
-                        !input.classList.contains("afya") && 
-                        !input.classList.contains("jamii")) {
-                        input.disabled = true;
-                    }
+// Zuia member asibadilishe taarifa YOYOTE (Read-only kwa masanduku yote)
+                card.querySelectorAll("input, select, textarea, button").forEach(element => {
+                    element.disabled = true;
                 });
             } else {
                 card.style.display = "none"; // Ficha kadi za wanachama wengine
