@@ -487,6 +487,7 @@ async function handleLogin() {
 function applyRolePermissions(){
     const isAdmin = currentUser && currentUser.role === "admin";
     const searchInput = document.getElementById("searchMember");
+   const dashboardSection = document.querySelector(".dashboard") || document.getElementById("dashboard");
 
     if (!isAdmin) {
         // 1. Ficha batani zote za Admin (Export, Backup, Funga Data)
@@ -498,6 +499,10 @@ function applyRolePermissions(){
             searchInput.disabled = true;
             searchInput.placeholder = "Kutafuta kumeruhusiwa kwa Admin pekee";
         }
+
+         if (dashboardSection) {
+    dashboardSection.style.display = "none";
+}  
 
         // 3. Weka format ya ID ya Mwanachama
         const formattedIdWithZeros = String(currentUser.id).padStart(3, "0");
@@ -524,6 +529,10 @@ function applyRolePermissions(){
             searchInput.disabled = false;
             searchInput.placeholder = "Tafuta Mwanachama...";
         }
+
+       if (dashboardSection) {
+    dashboardSection.style.display = "block";
+}
 
         document.querySelectorAll(".member-card").forEach(card => {
             card.style.display = "block";
