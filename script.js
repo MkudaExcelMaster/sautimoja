@@ -449,45 +449,39 @@ async function handleLogin() {
     const inputPass = document.getElementById("loginPassword").value.trim();
 
     if (!inputUser || !inputPass) {
-        alert("Tafadhali ingiza Namba ya simu na Password!");
+        alert("Tafadhali ingiza Namba ya simu au Jina na Password!");
         return;
     }
 
     try {
-        // 1. Tafuta mwanachama anayefanana na namba ya simu au jina
-        const { data, error } = await db
-            .from("members")
-            .select("*")
-            .or(`phone.eq.${inputUser},name.ilike.%${inputUser}%`);
+        // Tumia RPC function tuliyoitengeneza Supabase
+        const { data, error } = await db.rpc('check_member_login', {
+            user_input: inputUser,
+            user_pass: inputPass
+        });
 
         if (error || !data || data.length === 0) {
-            alert("Mtumiaji hajapatikana!");
+            alert("Mtumiaji au Neno la siri (Password) siyo sahihi!");
             return;
         }
 
         const user = data[0];
-        const userPassword = user.password || "sautimoja";
 
-        if (inputPass !== userPassword) {
-            alert("Neno la siri (Password) siyo sahihi!");
-            return;
-        }
-
-        // 2. Login Imefanikiwa
+        // Login Imefanikiwa
         currentUser = user;
         document.getElementById("loginSection").style.display = "none";
         document.getElementById("appSection").style.display = "block";
         document.getElementById("currentUserInfo").textContent = `Umeingia kama: ${user.name || 'Mwanakikundi'} (${user.role === 'admin' ? 'ADMIN' : 'MEMBER'})`;
 
-        // 3. Zichore au zivute kadi kwanza kutoka Supabase
+        // Zichore au zivute kadi kutoka Supabase
         await loadMembersFromSupabase();
 
-        // 4. Rekebisha Muonekano wa kadi kulingana na Role (Admin/Member)
+        // Rekebisha Muonekano wa kadi kulingana na Role
         applyRolePermissions();
 
     } catch (err) {
         alert("Hitilafu wakati wa kuingia: " + err.message);
-    }
+}
 }
 
 function applyRolePermissions(){
@@ -538,7 +532,6 @@ function applyRolePermissions(){
         });
 
         document.querySelectorAll(".controls-container button").forEach(btn => btn.style.display = "inline-block");
-    }
 }
 
 function handleLogout() {
