@@ -131,6 +131,54 @@ function createMembersCards() {
                         <p>Deni Lililobaki: <span class="resultDebt">0</span></p>
                     </div>
 
+                    <div class="member-summary">
+    <div class="member-results">
+        <h3 style="color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 15px; font-size: 1.1rem; text-transform: uppercase;">
+            📊 Matokeo ya Mwanachama (Jumla Kuu)
+        </h3>
+
+        <!-- GRID YA KADI ZENYE MUONEKANO WA KITAALAMU -->
+        <div class="results-grid-pro">
+            <div class="res-card blue">
+                <span class="res-label">Hisa Zote</span>
+                <strong class="resultTotalShares">0</strong>
+            </div>
+            <div class="res-card green">
+                <span class="res-label">Afya</span>
+                <strong class="resultHealth">0</strong>
+            </div>
+            <div class="res-card teal">
+                <span class="res-label">Jamii</span>
+                <strong class="resultCommunity">0</strong>
+            </div>
+            <div class="res-card red">
+                <span class="res-label">Faini Zote</span>
+                <strong class="resultFines">0</strong>
+            </div>
+            <div class="res-card orange">
+                <span class="res-label">Deni Mkopo Hisa</span>
+                <strong class="resultDebtShares">0</strong>
+            </div>
+            <div class="res-card purple">
+                <span class="res-label">Deni Mkopo Jamii</span>
+                <strong class="resultDebtCommunity">0</strong>
+            </div>
+            <div class="res-card dark">
+                <span class="res-label">Mikopo Yote</span>
+                <strong class="resultLoans">0</strong>
+            </div>
+            <div class="res-card indigo">
+                <span class="res-label">Marejesho Yote</span>
+                <strong class="resultPaid">0</strong>
+            </div>
+            <div class="res-card danger">
+                <span class="res-label">Deni Lililobaki</span>
+                <strong class="resultDebt">0</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
                     <h4 style="margin-top:15px; color:#2563EB;">INGIZA DATA ZA LEO / WIKI HII:</h4>
                     <div class="grid">
                         <div><label>Hisa Anzia (Jumla)</label><input type="number" class="hisaAnzia" value="${data.hisaAnzia || 0}" disabled></div>
