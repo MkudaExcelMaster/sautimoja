@@ -1,4 +1,4 @@
-// CDN ya Supabase lazima iwe kwenye index.html au uimport Supabase client
+// CND ya Supabase lazima iwe kwenye index.html au uimport Supabase client
 const SUPABASE_URL = "https://nkdvoqbbzgjdkvvccbej.supabase.co";
 const SUPABASE_KEY = "sb_publishable__6o1FK6fIdXD9st9G8QJ9w_ZLqH6lxC";
 
@@ -7,14 +7,6 @@ const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const membersContainer = document.getElementById("membersContainer");
 let membersData = {};
-let currentUser = null;
-
-// Anzisha kadi mara tu script inapopakiwa
-document.addEventListener("DOMContentLoaded", () => {
-    if (membersContainer) {
-        createMembersCards();
-    }
-});
 
 /* =====================================
    FORMAT NUMBER
@@ -30,6 +22,7 @@ async function loadMembersFromSupabase() {
     try {
         console.log("Inapakua data kutoka Supabase...");
         
+        // Kuvuta data zote kutoka table ya 'members'
         const { data, error } = await db
             .from("members")
             .select("*");
@@ -65,6 +58,8 @@ async function loadMembersFromSupabase() {
                 };
             });
             console.log("Data za Supabase zimepakiwa kikamilifu!");
+        } else {
+            console.warn("Hakuna data kwenye Supabase bado.");
         }
 
         initializeApp();
@@ -78,10 +73,9 @@ async function loadMembersFromSupabase() {
 
 /* =====================================
    CREATE MEMBERS CARDS (Kujenga Kadi 120)
-===================================== */
+   ===================================== */
 function createMembersCards() {
-    if (!membersContainer) return;
-    membersContainer.innerHTML = "";
+    membersContainer.innerHTML = ""; // Kusafisha eneo kwanza
     const fragment = document.createDocumentFragment();
 
     for (let i = 1; i <= 120; i++) {
@@ -90,12 +84,12 @@ function createMembersCards() {
         const card = document.createElement("div");
         card.className = "member-card";
         card.setAttribute("data-member", memberId);
-        card.style.display = "block"; // Hakikisha inaonyeshwa kwa default
 
         const imageSrc = data.photo 
             ? data.photo 
-            : "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23ccc'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+            : "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23ccc'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
+        // Format Tarehe (ISO timestamp -> YYYY-MM-DD)
         const formattedJoinDate = data.joinDate ? String(data.joinDate).split('T')[0] : '';
         const formattedBirthDate = data.birthDate ? String(data.birthDate).split('T')[0] : '';
 
@@ -128,31 +122,31 @@ function createMembersCards() {
                 <div class="member-results">
                     <h3>MATOKEO YA MWANACHAMA (JUMLA KUU)</h3>
                     <div class="results-grid">
-                        <p>Hisa Zote: <span class="resultTotalShares">0</span></p>
-                        <p>Afya: <span class="resultHealth">0</span></p>
-                        <p>Jamii: <span class="resultCommunity">0</span></p>
-                        <p>Faini Zote: <span class="resultFines">0</span></p>
-                        <p>Deni la Mkopo Hisa: <span class="resultDebtShares">0</span></p>
-                        <p>Deni la Mkopo Jamii: <span class="resultDebtCommunity">0</span></p>
-                        <p>Mikopo Yote: <span class="resultLoans">0</span></p>
-                        <p>Marejesho Yote: <span class="resultPaid">0</span></p>
-                        <p>Deni Lililobaki: <span class="resultDebt">0</span></p>
+                        <div class="result-item"><span>Jumla ya Hisa</span><strong class="resultTotalShares">0</strong></div>
+                        <div class="result-item"><span>Jumla ya Afya</span><strong class="resultHealth">0</strong></div>
+                        <div class="result-item"><span>Jumla ya Jamii</span><strong class="resultCommunity">0</strong></div>
+                        <div class="result-item"><span>Jumla ya Faini</span><strong class="resultFines">0</strong></div>
+                        <div class="result-item"><span>Baki Mkopo Hisa</span><strong class="resultDebtShares">0</strong></div>
+                        <div class="result-item"><span>Baki Mkopo Jamii</span><strong class="resultDebtCommunity">0</strong></div>
+                        <div class="result-item"><span>Jumla Mikopo</span><strong class="resultLoans">0</strong></div>
+                        <div class="result-item"><span>Jumla Iliyolipwa</span><strong class="resultPaid">0</strong></div>
+                        <div class="result-item"><span>Jumla Madeni</span><strong class="resultDebt">0</strong></div>
                     </div>
 
                     <h4 style="margin-top:15px; color:#2563EB;">INGIZA DATA ZA LEO / WIKI HII:</h4>
-                    <div class="grid">
-                        <div><label>Hisa Anzia (Jumla)</label><input type="number" class="hisaAnzia" value="${data.hisaAnzia || 0}" disabled></div>
-                        <div><label>Hisa ya Leo (+)</label><input type="number" class="hisaWiki" value="0"></div>
-                        <div><label>Afya (Jumla)</label><input type="number" class="afya" value="${data.afya || 0}"></div>
-                        <div><label>Jamii (Jumla)</label><input type="number" class="jamii" value="${data.jamii || 0}"></div>
-                        <div><label>Faini I (+)</label><input type="number" class="faini1" value="${data.faini1 || 0}"></div>
-                        <div><label>Faini II (+)</label><input type="number" class="faini2" value="${data.faini2 || 0}"></div>
-                        <div><label>Faini III (+)</label><input type="number" class="faini3" value="${data.faini3 || 0}"></div>
-                        <div><label>Mkopo Hisa Mpya (+)</label><input type="number" class="mkopoHisa" value="${data.mkopoHisa || 0}"></div>
-                        <div><label>Hisa Inayolipwa Leo (+)</label><input type="number" class="hisaLipwa" value="${data.hisaLipwa || 0}"></div>
-                        <div><label>Mkopo Jamii Mpya (+)</label><input type="number" class="mkopoJamii" value="${data.mkopoJamii || 0}"></div>
-                        <div><label>Jamii Inayolipwa Leo (+)</label><input type="number" class="jamiiLipwa" value="${data.jamiiLipwa || 0}"></div>
-                    </div>
+<div class="grid">
+    <div><label>Hisa Anzia (Jumla)</label><input type="number" class="hisaAnzia" value="${data.hisaAnzia || 0}" disabled></div>
+    <div><label>Hisa ya Leo (+)</label><input type="number" class="hisaWiki" value="0"></div>
+    <div><label>Afya (Jumla)</label><input type="number" class="afya" value="${data.afya || 0}"></div>
+    <div><label>Jamii (Jumla)</label><input type="number" class="jamii" value="${data.jamii || 0}"></div>
+    <div><label>Faini I (+)</label><input type="number" class="faini1" value="${data.faini1 || 0}"></div>
+    <div><label>Faini II (+)</label><input type="number" class="faini2" value="${data.faini2 || 0}"></div>
+    <div><label>Faini III (+)</label><input type="number" class="faini3" value="${data.faini3 || 0}"></div>
+    <div><label>Mkopo Hisa Mpya (+)</label><input type="number" class="mkopoHisa" value="${data.mkopoHisa || 0}"></div>
+    <div><label>Hisa Inayolipwa Leo (+)</label><input type="number" class="hisaLipwa" value="${data.hisaLipwa || 0}"></div>
+    <div><label>Mkopo Jamii Mpya (+)</label><input type="number" class="mkopoJamii" value="${data.mkopoJamii || 0}"></div>
+    <div><label>Jamii Inayolipwa Leo (+)</label><input type="number" class="jamiiLipwa" value="${data.jamiiLipwa || 0}"></div>
+</div>
                     <button class="save-member" style="background-color: #10B981; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px; margin-top: 10px; width: 100%;">💾 Funga & Hifadhi Supabase</button>
                 </div>
             </div>`;
@@ -196,7 +190,7 @@ membersContainer.addEventListener("click", (event) => {
 ===================================== */
 async function saveBasicInfo(card) {
     const memberId = card.getAttribute("data-member");
-    const rawId = String(parseInt(memberId, 10));
+    const rawId = String(parseInt(memberId, 10)); // Ondoa leading zeros kwa ajili ya DB
     if (!membersData[memberId]) membersData[memberId] = {};
 
     membersData[memberId].name = card.querySelector(".member-name").value;
@@ -214,7 +208,7 @@ async function saveBasicInfo(card) {
             name: membersData[memberId].name,
             phone: membersData[memberId].phone,
             gender: membersData[memberId].gender,
-            dob: dobValue ? dobValue : null,
+            dob: dobValue ? dobValue : null, // Zuia kosa la string tupu ""
             guardian: membersData[memberId].mrithi
         }]);
 
@@ -230,35 +224,35 @@ async function processTodayData(memberId) {
     const card = document.querySelector(`[data-member="${memberId}"]`);
     if (!card) return;
 
-    const rawId = String(parseInt(memberId, 10));
+    const rawId = String(parseInt(memberId, 10)); // DB inatumia ID kama '1', '10' badala ya '001'
 
     const existing = membersData[memberId] || {
         hisaAnzia: 0, afya: 0, jamii: 0, faini1: 0, faini2: 0, faini3: 0,
         mkopoHisa: 0, hisaLipwa: 0, mkopoJamii: 0, jamiiLipwa: 0
     };
 
-    const leoHisa = Number(card.querySelector(".hisaWiki")?.value || 0);
-    const totalAfya = Number(card.querySelector(".afya")?.value || 0);
-    const totalJamii = Number(card.querySelector(".jamii")?.value || 0);
-    const totalFaini1 = Number(card.querySelector(".faini1")?.value || 0);
-    const totalFaini2 = Number(card.querySelector(".faini2")?.value || 0);
-    const totalFaini3 = Number(card.querySelector(".faini3")?.value || 0);
-    const totalMkopoHisa = Number(card.querySelector(".mkopoHisa")?.value || 0);
-    const totalHisaLipwa = Number(card.querySelector(".hisaLipwa")?.value || 0);
-    const totalMkopoJamii = Number(card.querySelector(".mkopoJamii")?.value || 0);
-    const totalJamiiLipwa = Number(card.querySelector(".jamiiLipwa")?.value || 0);
+    const leoHisa = Number(card.querySelector(".hisaWiki").value || 0);
+    const leoAfya = Number(card.querySelector(".afya").value || 0);
+    const leoJamii = Number(card.querySelector(".jamii").value || 0);
+    const leoFaini1 = Number(card.querySelector(".faini1").value || 0);
+    const leoFaini2 = Number(card.querySelector(".faini2").value || 0);
+    const leoFaini3 = Number(card.querySelector(".faini3").value || 0);
+    const leoMkopoHisa = Number(card.querySelector(".mkopoHisa").value || 0);
+    const leoHisaLipwa = Number(card.querySelector(".hisaLipwa").value || 0);
+    const leoMkopoJamii = Number(card.querySelector(".mkopoJamii").value || 0);
+    const leoJamiiLipwa = Number(card.querySelector(".jamiiLipwa").value || 0);
 
     const updatedDataLocal = {
         hisaAnzia: (existing.hisaAnzia || 0) + leoHisa,
-        afya: totalAfya,
-        jamii: totalJamii,
-        faini1: totalFaini1,
-        faini2: totalFaini2,
-        faini3: totalFaini3,
-        mkopoHisa: totalMkopoHisa,
-        hisaLipwa: totalHisaLipwa,
-        mkopoJamii: totalMkopoJamii,
-        jamiiLipwa: totalJamiiLipwa
+        afya: (existing.afya || 0) + leoAfya,
+        jamii: (existing.jamii || 0) + leoJamii,
+        faini1: (existing.faini1 || 0) + leoFaini1,
+        faini2: (existing.faini2 || 0) + leoFaini2,
+        faini3: (existing.faini3 || 0) + leoFaini3,
+        mkopoHisa: (existing.mkopoHisa || 0) + leoMkopoHisa,
+        hisaLipwa: (existing.hisaLipwa || 0) + leoHisaLipwa,
+        mkopoJamii: (existing.mkopoJamii || 0) + leoMkopoJamii,
+        jamiiLipwa: (existing.jamiiLipwa || 0) + leoJamiiLipwa
     };
 
     const dobValue = card.querySelector(".member-birthdate").value;
@@ -268,7 +262,7 @@ async function processTodayData(memberId) {
         name: card.querySelector(".member-name").value,
         phone: card.querySelector(".member-phone").value,
         gender: card.querySelector(".member-gender").value,
-        dob: dobValue ? dobValue : null,
+        dob: dobValue ? dobValue : null, // Zuia tarehe kuleta error 400
         guardian: card.querySelector(".member-mrithi").value,
         photo_url: existing.photo || "",
         
@@ -285,13 +279,17 @@ async function processTodayData(memberId) {
         updated_at: new Date().toISOString()
     };
 
-    const { error } = await db.from("members").upsert([payloadSupabase]);
+    // Hifadhi Supabase
+    const { error } = await db
+        .from("members")
+        .upsert([payloadSupabase]);
 
     if (error) {
         alert("Hitilafu wakati wa kuhifadhi Supabase: " + error.message);
         return;
     }
 
+    // Sasisha local memory
     membersData[memberId] = {
         ...membersData[memberId],
         ...updatedDataLocal,
@@ -302,13 +300,16 @@ async function processTodayData(memberId) {
         mrithi: payloadSupabase.guardian
     };
 
+    // Sasisha fomu ya "Hisa Anzia"
     card.querySelector(".hisaAnzia").value = membersData[memberId].hisaAnzia;
-    card.querySelector(".hisaWiki").value = 0;
+
+    // Kusafisha input za leo zirudi kuwa 0
+    card.querySelectorAll(".grid input:not(.hisaAnzia)").forEach(input => input.value = 0);
 
     calculateMember(card);
     updateDashboard();
 
-    alert(`Data zote za Mwanakikundi ${memberId} zimehifadhiwa kikamilifu Supabase!`);
+    alert(`Mabadiliko ya Mwanakikundi ${memberId} yamehifadhiwa mtandaoni (Supabase)!`);
 }
 
 /* =====================================
@@ -317,40 +318,29 @@ async function processTodayData(memberId) {
 function calculateMember(card) {
     const memberId = card.getAttribute("data-member");
     const mData = membersData[memberId] || {};
+    const getLeo = cls => Number(card.querySelector(cls)?.value || 0);
 
-    const leoHisaWiki = Number(card.querySelector(".hisaWiki")?.value || 0);
-    const totalShares = (mData.hisaAnzia || 0) + leoHisaWiki;
+    const totalShares = (mData.hisaAnzia || 0) + getLeo(".hisaWiki");
+    const totalHealth = (mData.afya || 0) + getLeo(".afya");
+    const totalCommunity = (mData.jamii || 0) + getLeo(".jamii");
+    const totalFines = (mData.faini1 || 0) + (mData.faini2 || 0) + (mData.faini3 || 0) + getLeo(".faini1") + getLeo(".faini2") + getLeo(".faini3");
     
-    const totalHealth = Number(card.querySelector(".afya")?.value || 0);
-    const totalCommunity = Number(card.querySelector(".jamii")?.value || 0);
-    const totalFines = Number(card.querySelector(".faini1")?.value || 0) + Number(card.querySelector(".faini2")?.value || 0) + Number(card.querySelector(".faini3")?.value || 0);
+    const debtShares = ((mData.mkopoHisa || 0) + getLeo(".mkopoHisa")) - ((mData.hisaLipwa || 0) + getLeo(".hisaLipwa"));
+    const debtCommunity = ((mData.mkopoJamii || 0) + getLeo(".mkopoJamii")) - ((mData.jamiiLipwa || 0) + getLeo(".jamiiLipwa"));
     
-    const mkopoHisaVal = Number(card.querySelector(".mkopoHisa")?.value || 0);
-    const hisaLipwaVal = Number(card.querySelector(".hisaLipwa")?.value || 0);
-    const mkopoJamiiVal = Number(card.querySelector(".mkopoJamii")?.value || 0);
-    const jamiiLipwaVal = Number(card.querySelector(".jamiiLipwa")?.value || 0);
-
-    const debtShares = mkopoHisaVal - hisaLipwaVal;
-    const debtCommunity = mkopoJamiiVal - jamiiLipwaVal;
-    
-    const totalLoans = mkopoHisaVal + mkopoJamiiVal;
-    const totalPaid = hisaLipwaVal + jamiiLipwaVal;
+    const totalLoans = (mData.mkopoHisa || 0) + (mData.mkopoJamii || 0) + getLeo(".mkopoHisa") + getLeo(".mkopoJamii");
+    const totalPaid = (mData.hisaLipwa || 0) + (mData.jamiiLipwa || 0) + getLeo(".hisaLipwa") + getLeo(".jamiiLipwa");
     const totalDebt = debtShares + debtCommunity;
 
-    const setRes = (cls, val) => {
-        const el = card.querySelector("." + cls);
-        if (el) el.textContent = formatNumber(val);
-    };
-
-    setRes("resultTotalShares", totalShares);
-    setRes("resultHealth", totalHealth);
-    setRes("resultCommunity", totalCommunity);
-    setRes("resultFines", totalFines);
-    setRes("resultDebtShares", debtShares);
-    setRes("resultDebtCommunity", debtCommunity);
-    setRes("resultLoans", totalLoans);
-    setRes("resultPaid", totalPaid);
-    setRes("resultDebt", totalDebt);
+    card.querySelector(".resultTotalShares").textContent = formatNumber(totalShares);
+    card.querySelector(".resultHealth").textContent = formatNumber(totalHealth);
+    card.querySelector(".resultCommunity").textContent = formatNumber(totalCommunity);
+    card.querySelector(".resultFines").textContent = formatNumber(totalFines);
+    card.querySelector(".resultDebtShares").textContent = formatNumber(debtShares);
+    card.querySelector(".resultDebtCommunity").textContent = formatNumber(debtCommunity);
+    card.querySelector(".resultLoans").textContent = formatNumber(totalLoans);
+    card.querySelector(".resultPaid").textContent = formatNumber(totalPaid);
+    card.querySelector(".resultDebt").textContent = formatNumber(totalDebt);
 }
 
 /* =====================================
@@ -360,24 +350,15 @@ function updateDashboard() {
     let rawShares = 0, health = 0, rawCommunity = 0, fines = 0;
     let loanShares = 0, sharesPaid = 0, loanCommunity = 0, communityPaid = 0;
 
-    document.querySelectorAll(".member-card").forEach(card => {
-        const memberId = card.getAttribute("data-member");
-        const mData = membersData[memberId] || {};
-
-        const leoHisaWiki = Number(card.querySelector(".hisaWiki")?.value || 0);
-        
-        rawShares += (mData.hisaAnzia || 0) + leoHisaWiki;
-        health += Number(card.querySelector(".afya")?.value || 0);
-        rawCommunity += Number(card.querySelector(".jamii")?.value || 0);
-        
-        fines += Number(card.querySelector(".faini1")?.value || 0) + 
-                 Number(card.querySelector(".faini2")?.value || 0) + 
-                 Number(card.querySelector(".faini3")?.value || 0);
-                 
-        loanShares += Number(card.querySelector(".mkopoHisa")?.value || 0);
-        sharesPaid += Number(card.querySelector(".hisaLipwa")?.value || 0);
-        loanCommunity += Number(card.querySelector(".mkopoJamii")?.value || 0);
-        communityPaid += Number(card.querySelector(".jamiiLipwa")?.value || 0);
+    Object.values(membersData).forEach(m => {
+        rawShares += (m.hisaAnzia || 0);
+        health += (m.afya || 0);
+        rawCommunity += (m.jamii || 0);
+        fines += (m.faini1 || 0) + (m.faini2 || 0) + (m.faini3 || 0);
+        loanShares += (m.mkopoHisa || 0);
+        sharesPaid += (m.hisaLipwa || 0);
+        loanCommunity += (m.mkopoJamii || 0);
+        communityPaid += (m.jamiiLipwa || 0);
     });
 
     const activeShares = (rawShares + sharesPaid) - loanShares;
@@ -430,8 +411,9 @@ function savePhoto(event, memberId) {
 }
 
 function searchMember() {
+    // Kagua ikiwa mtumiaji aliyeingia ni Admin
     const isAdmin = currentUser && currentUser.role === "admin";
-    if (!isAdmin) return;
+    if (!isAdmin) return; // Kama siyo Admin, search haifanyi kazi
 
     const searchInput = document.getElementById("searchMember");
     if (!searchInput) return;
@@ -446,12 +428,10 @@ function searchMember() {
     });
 }
 
-/* =====================================
-   INITIALIZE APP
-===================================== */
 function initializeApp() {
     createMembersCards();
 
+    // Kuhesabu upya kila kadi wakati wa kuanza
     document.querySelectorAll(".member-card").forEach(card => {
         calculateMember(card);
     });
@@ -462,6 +442,8 @@ function initializeApp() {
 /* =====================================
    MFUMO WA LOGIN NA UTAMBULISHO (ROLES)
 ===================================== */
+let currentUser = null;
+
 async function handleLogin() {
     const inputUser = document.getElementById("loginUsername").value.trim();
     const inputPass = document.getElementById("loginPassword").value.trim();
@@ -472,6 +454,7 @@ async function handleLogin() {
     }
 
     try {
+        // Tumia RPC function tuliyoitengeneza Supabase
         const { data, error } = await db.rpc('check_member_login', {
             user_input: inputUser,
             user_pass: inputPass
@@ -484,38 +467,51 @@ async function handleLogin() {
 
         const user = data[0];
 
+        // Login Imefanikiwa
         currentUser = user;
         document.getElementById("loginSection").style.display = "none";
         document.getElementById("appSection").style.display = "block";
         document.getElementById("currentUserInfo").textContent = `Umeingia kama: ${user.name || 'Mwanakikundi'} (${user.role === 'admin' ? 'ADMIN' : 'MEMBER'})`;
 
+        // Zichore au zivute kadi kutoka Supabase
         await loadMembersFromSupabase();
+
+        // Rekebisha Muonekano wa kadi kulingana na Role
         applyRolePermissions();
 
     } catch (err) {
         alert("Hitilafu wakati wa kuingia: " + err.message);
-    }
+        }
 }
 
 function applyRolePermissions() {
     const isAdmin = currentUser && currentUser.role === "admin";
     const searchInput = document.getElementById("searchMember");
+    
+    // Njia sahihi ya kuipata Dashboard Kuu pekee
     const dashboardSection = document.querySelector(".dashboard-container");
 
     if (!isAdmin) {
-        if (dashboardSection) dashboardSection.style.display = "none";
+        // 1. Ficha Dashboard Kuu kwa Member
+        if (dashboardSection) {
+            dashboardSection.style.display = "none";
+        }
 
+        // 2. Ficha batani zote za Admin (Export, Backup, Funga Data)
         document.querySelectorAll(".controls-container button").forEach(btn => btn.style.display = "none");
         
+        // 3. Kuzuia na kulemaza kisanduku cha Search kwa Member
         if (searchInput) {
             searchInput.value = "";
             searchInput.disabled = true;
             searchInput.placeholder = "Kutafuta kumeruhusiwa kwa Admin pekee";
         }
 
+        // 4. Weka format ya ID ya Mwanachama
         const formattedIdWithZeros = String(currentUser.id).padStart(3, "0");
         const rawIdString = String(currentUser.id);
 
+        // 5. Onyesha kadi ya mwanachama pekee na kulemaza inputs zote
         document.querySelectorAll(".member-card").forEach(card => {
             const cardId = card.getAttribute("data-member");
             
@@ -524,14 +520,15 @@ function applyRolePermissions() {
                 card.querySelectorAll("input, select, textarea, button").forEach(element => {
                     element.disabled = true;
                 });
-                
-                calculateMember(card);
             } else {
                 card.style.display = "none";
             }
         });
     } else {
-        if (dashboardSection) dashboardSection.style.display = "block";
+        // Kama ni Admin: Onyesha Dashboard Kuu
+        if (dashboardSection) {
+            dashboardSection.style.display = "block";
+        }
 
         if (searchInput) {
             searchInput.disabled = false;
@@ -541,13 +538,9 @@ function applyRolePermissions() {
         document.querySelectorAll(".member-card").forEach(card => {
             card.style.display = "block";
             card.querySelectorAll("input, select, textarea, button").forEach(element => element.disabled = false);
-            
-            calculateMember(card);
         });
 
         document.querySelectorAll(".controls-container button").forEach(btn => btn.style.display = "inline-block");
-        
-        updateDashboard();
     }
 }
 
@@ -580,7 +573,19 @@ async function saveAllData() {
             const guardian = card.querySelector(".member-mrithi")?.value || existing.mrithi || "";
             const photoUrl = card.querySelector(`#photo-${memberId}`)?.src || existing.photo || "";
 
+            // Chukua kilichopo + kisanduku cha leo
             const leoHisa = Number(card.querySelector(".hisaWiki")?.value || 0);
+            const totalHisa = (existing.hisaAnzia || 0) + leoHisa;
+
+            const totalAfya = Number(card.querySelector(".afya")?.value || existing.afya || 0);
+            const totalJamii = Number(card.querySelector(".jamii")?.value || existing.jamii || 0);
+            const totalF1 = Number(card.querySelector(".faini1")?.value || existing.faini1 || 0);
+            const totalF2 = Number(card.querySelector(".faini2")?.value || existing.faini2 || 0);
+            const totalF3 = Number(card.querySelector(".faini3")?.value || existing.faini3 || 0);
+            const totalMkopoHisa = Number(card.querySelector(".mkopoHisa")?.value || existing.mkopoHisa || 0);
+            const totalHisaLipwa = Number(card.querySelector(".hisaLipwa")?.value || existing.hisaLipwa || 0);
+            const totalMkopoJamii = Number(card.querySelector(".mkopoJamii")?.value || existing.mkopoJamii || 0);
+            const totalJamiiLipwa = Number(card.querySelector(".jamiiLipwa")?.value || existing.jamiiLipwa || 0);
 
             const { error } = await db.from("members").upsert({
                 id: parseInt(memberId, 10),
@@ -590,24 +595,24 @@ async function saveAllData() {
                 dob,
                 guardian,
                 photo_url: photoUrl,
-                hisa_anzia: (existing.hisaAnzia || 0) + leoHisa,
-                afya_leo: Number(card.querySelector(".afya")?.value || 0),
-                jamii_leo: Number(card.querySelector(".jamii")?.value || 0),
-                faini_1: Number(card.querySelector(".faini1")?.value || 0),
-                faini_2: Number(card.querySelector(".faini2")?.value || 0),
-                faini_3: Number(card.querySelector(".faini3")?.value || 0),
-                mkopo_hisa_mpya: Number(card.querySelector(".mkopoHisa")?.value || 0),
-                hisa_inayolipwa_leo: Number(card.querySelector(".hisaLipwa")?.value || 0),
-                mkopo_jamii_mpya: Number(card.querySelector(".mkopoJamii")?.value || 0),
-                jamii_inayolipwa_leo: Number(card.querySelector(".jamiiLipwa")?.value || 0),
+                hisa_anzia: totalHisa,
+                afya_leo: totalAfya,
+                jamii_leo: totalJamii,
+                faini_1: totalF1,
+                faini_2: totalF2,
+                faini_3: totalF3,
+                mkopo_hisa_mpya: totalMkopoHisa,
+                hisa_inayolipwa_leo: totalHisaLipwa,
+                mkopo_jamii_mpya: totalMkopoJamii,
+                jamii_inayolipwa_leo: totalJamiiLipwa,
                 updated_at: new Date().toISOString()
             });
 
             if (!error) saveCount++;
         }
 
-        alert(`Imefanikiwa kuokoa data zote za wanakikundi ${saveCount} kwenye Supabase!`);
-        await loadMembersFromSupabase();
+        alert(`Imefanikiwa kuokoa data za wanakikundi ${saveCount} kwenye Supabase!`);
+        await loadMembersFromSupabase(); // Pakua data upya ili kusafisha muonekano
     } catch (err) {
         alert("Hitilafu wakati wa kuhifadhi data: " + err.message);
     }
