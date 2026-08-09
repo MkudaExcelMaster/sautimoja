@@ -121,17 +121,19 @@ function createMembersCards() {
             <div class="member-summary">
                 <div class="member-results">
                     <h3>MATOKEO YA MWANACHAMA (JUMLA KUU)</h3>
-                    <div class="results-grid">
-                        <div class="result-item"><span>Jumla ya Hisa</span><strong class="resultTotalShares">0</strong></div>
-                        <div class="result-item"><span>Jumla ya Afya</span><strong class="resultHealth">0</strong></div>
-                        <div class="result-item"><span>Jumla ya Jamii</span><strong class="resultCommunity">0</strong></div>
-                        <div class="result-item"><span>Jumla ya Faini</span><strong class="resultFines">0</strong></div>
-                        <div class="result-item"><span>Baki Mkopo Hisa</span><strong class="resultDebtShares">0</strong></div>
-                        <div class="result-item"><span>Baki Mkopo Jamii</span><strong class="resultDebtCommunity">0</strong></div>
-                        <div class="result-item"><span>Jumla Mikopo</span><strong class="resultLoans">0</strong></div>
-                        <div class="result-item"><span>Jumla Iliyolipwa</span><strong class="resultPaid">0</strong></div>
-                        <div class="result-item"><span>Jumla Madeni</span><strong class="resultDebt">0</strong></div>
-                    </div>
+<div class="grid">
+    <div><label>Hisa Anzia (Jumla)</label><input type="number" class="hisaAnzia" value="${data.hisaAnzia || 0}" disabled></div>
+    <div><label>Hisa ya Leo (+)</label><input type="number" class="hisaWiki" value="0"></div>
+    <div><label>Afya (Jumla)</label><input type="number" class="afya" value="${data.afya || 0}"></div>
+    <div><label>Jamii (Jumla)</label><input type="number" class="jamii" value="${data.jamii || 0}"></div>
+    <div><label>Faini I (+)</label><input type="number" class="faini1" value="${data.faini1 || 0}"></div>
+    <div><label>Faini II (+)</label><input type="number" class="faini2" value="${data.faini2 || 0}"></div>
+    <div><label>Faini III (+)</label><input type="number" class="faini3" value="${data.faini3 || 0}"></div>
+    <div><label>Mkopo Hisa Mpya (+)</label><input type="number" class="mkopoHisa" value="${data.mkopoHisa || 0}"></div>
+    <div><label>Hisa Inayolipwa Leo (+)</label><input type="number" class="hisaLipwa" value="${data.hisaLipwa || 0}"></div>
+    <div><label>Mkopo Jamii Mpya (+)</label><input type="number" class="mkopoJamii" value="${data.mkopoJamii || 0}"></div>
+    <div><label>Jamii Inayolipwa Leo (+)</label><input type="number" class="jamiiLipwa" value="${data.jamiiLipwa || 0}"></div>
+</div>
 
                     <h4 style="margin-top:15px; color:#2563EB;">INGIZA DATA ZA LEO / WIKI HII:</h4>
 <div class="grid">
@@ -504,31 +506,22 @@ async function handleLogin() {
 function applyRolePermissions() {
     const isAdmin = currentUser && currentUser.role === "admin";
     const searchInput = document.getElementById("searchMember");
-    
-    // Njia sahihi ya kuipata Dashboard Kuu pekee
     const dashboardSection = document.querySelector(".dashboard-container");
 
     if (!isAdmin) {
-        // 1. Ficha Dashboard Kuu kwa Member
-        if (dashboardSection) {
-            dashboardSection.style.display = "none";
-        }
+        if (dashboardSection) dashboardSection.style.display = "none";
 
-        // 2. Ficha batani zote za Admin (Export, Backup, Funga Data)
         document.querySelectorAll(".controls-container button").forEach(btn => btn.style.display = "none");
         
-        // 3. Kuzuia na kulemaza kisanduku cha Search kwa Member
         if (searchInput) {
             searchInput.value = "";
             searchInput.disabled = true;
             searchInput.placeholder = "Kutafuta kumeruhusiwa kwa Admin pekee";
         }
 
-        // 4. Weka format ya ID ya Mwanachama
         const formattedIdWithZeros = String(currentUser.id).padStart(3, "0");
         const rawIdString = String(currentUser.id);
 
-        // 5. Onyesha kadi ya mwanachama pekee na kulemaza inputs zote
         document.querySelectorAll(".member-card").forEach(card => {
             const cardId = card.getAttribute("data-member");
             
@@ -537,15 +530,15 @@ function applyRolePermissions() {
                 card.querySelectorAll("input, select, textarea, button").forEach(element => {
                     element.disabled = true;
                 });
+                
+                // Piga hesabu za matokeo kwa mwanachama aliyeingia
+                calculateMember(card);
             } else {
                 card.style.display = "none";
             }
         });
     } else {
-        // Kama ni Admin: Onyesha Dashboard Kuu
-        if (dashboardSection) {
-            dashboardSection.style.display = "block";
-        }
+        if (dashboardSection) dashboardSection.style.display = "block";
 
         if (searchInput) {
             searchInput.disabled = false;
@@ -555,9 +548,15 @@ function applyRolePermissions() {
         document.querySelectorAll(".member-card").forEach(card => {
             card.style.display = "block";
             card.querySelectorAll("input, select, textarea, button").forEach(element => element.disabled = false);
+            
+            // Piga hesabu upya kwa kila kadi
+            calculateMember(card);
         });
 
         document.querySelectorAll(".controls-container button").forEach(btn => btn.style.display = "inline-block");
+        
+        // Sasisha dashboard kuu ya admin
+        updateDashboard();
     }
 }
 
