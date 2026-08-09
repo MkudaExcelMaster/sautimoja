@@ -687,7 +687,7 @@ async function exportExcel() {
         alert("Hitilafu kwenye ku-export Excel: " + err.message);
     }
 }// Unatakiwa kuwa na declaration moja tu ya currentUser
-let currentUser = null; 
+currentUser = null; 
 
 // Definition ya handleLogin
 function handleLogin(event) {
