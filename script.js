@@ -629,11 +629,3 @@ async function exportExcel() {
         alert("Hitilafu kwenye ku-export Excel: " + err.message);
     }
 }
-
-
-document.addEventListener('DOMContentLoaded', () => {
-  const loginButton = document.getElementById('loginBtn');
-  if (loginButton) {
-    loginButton.addEventListener('click', handleLogin);
-  }
-});
