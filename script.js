@@ -224,24 +224,26 @@ async function processTodayData(memberId) {
     const card = document.querySelector(`[data-member="${memberId}"]`);
     if (!card) return;
 
-    const rawId = String(parseInt(memberId, 10)); // DB inatumia ID kama '1', '10' badala ya '001'
+    const rawId = String(parseInt(memberId, 10));
 
     const existing = membersData[memberId] || {
         hisaAnzia: 0, afya: 0, jamii: 0, faini1: 0, faini2: 0, faini3: 0,
         mkopoHisa: 0, hisaLipwa: 0, mkopoJamii: 0, jamiiLipwa: 0
     };
 
-    const leoHisa = Number(card.querySelector(".hisaWiki").value || 0);
-    const leoAfya = Number(card.querySelector(".afya").value || 0);
-    const leoJamii = Number(card.querySelector(".jamii").value || 0);
-    const leoFaini1 = Number(card.querySelector(".faini1").value || 0);
-    const leoFaini2 = Number(card.querySelector(".faini2").value || 0);
-    const leoFaini3 = Number(card.querySelector(".faini3").value || 0);
-    const leoMkopoHisa = Number(card.querySelector(".mkopoHisa").value || 0);
-    const leoHisaLipwa = Number(card.querySelector(".hisaLipwa").value || 0);
-    const leoMkopoJamii = Number(card.querySelector(".mkopoJamii").value || 0);
-    const leoJamiiLipwa = Number(card.querySelector(".jamiiLipwa").value || 0);
+    // Chukua thamani za leo kutoka kwenye fomu
+    const leoHisa = Number(card.querySelector(".hisaWiki")?.value || 0);
+    const leoAfya = Number(card.querySelector(".afya")?.value || 0);
+    const leoJamii = Number(card.querySelector(".jamii")?.value || 0);
+    const leoFaini1 = Number(card.querySelector(".faini1")?.value || 0);
+    const leoFaini2 = Number(card.querySelector(".faini2")?.value || 0);
+    const leoFaini3 = Number(card.querySelector(".faini3")?.value || 0);
+    const leoMkopoHisa = Number(card.querySelector(".mkopoHisa")?.value || 0);
+    const leoHisaLipwa = Number(card.querySelector(".hisaLipwa")?.value || 0);
+    const leoMkopoJamii = Number(card.querySelector(".mkopoJamii")?.value || 0);
+    const leoJamiiLipwa = Number(card.querySelector(".jamiiLipwa")?.value || 0);
 
+    // Jumlisha kilichopo (zamani) + cha leo ili kuhifadhi Kumulative Total Supabase
     const updatedDataLocal = {
         hisaAnzia: (existing.hisaAnzia || 0) + leoHisa,
         afya: (existing.afya || 0) + leoAfya,
@@ -262,7 +264,7 @@ async function processTodayData(memberId) {
         name: card.querySelector(".member-name").value,
         phone: card.querySelector(".member-phone").value,
         gender: card.querySelector(".member-gender").value,
-        dob: dobValue ? dobValue : null, // Zuia tarehe kuleta error 400
+        dob: dobValue ? dobValue : null,
         guardian: card.querySelector(".member-mrithi").value,
         photo_url: existing.photo || "",
         
@@ -280,16 +282,14 @@ async function processTodayData(memberId) {
     };
 
     // Hifadhi Supabase
-    const { error } = await db
-        .from("members")
-        .upsert([payloadSupabase]);
+    const { error } = await db.from("members").upsert([payloadSupabase]);
 
     if (error) {
         alert("Hitilafu wakati wa kuhifadhi Supabase: " + error.message);
         return;
     }
 
-    // Sasisha local memory
+    // Sasisha local memory (membersData)
     membersData[memberId] = {
         ...membersData[memberId],
         ...updatedDataLocal,
@@ -300,16 +300,14 @@ async function processTodayData(memberId) {
         mrithi: payloadSupabase.guardian
     };
 
-    // Sasisha fomu ya "Hisa Anzia"
+    // Safisha fomu za kuingizia data za leo zirudi 0
     card.querySelector(".hisaAnzia").value = membersData[memberId].hisaAnzia;
-
-    // Kusafisha input za leo zirudi kuwa 0
     card.querySelectorAll(".grid input:not(.hisaAnzia)").forEach(input => input.value = 0);
 
     calculateMember(card);
     updateDashboard();
 
-    alert(`Mabadiliko ya Mwanakikundi ${memberId} yamehifadhiwa mtandaoni (Supabase)!`);
+    alert(`Data zote za Mwanakikundi ${memberId} zimehifadhiwa kikamilifu Supabase!`);
 }
 
 /* =====================================
@@ -575,17 +573,15 @@ async function saveAllData() {
 
             // Chukua kilichopo + kisanduku cha leo
             const leoHisa = Number(card.querySelector(".hisaWiki")?.value || 0);
-            const totalHisa = (existing.hisaAnzia || 0) + leoHisa;
-
-            const totalAfya = Number(card.querySelector(".afya")?.value || existing.afya || 0);
-            const totalJamii = Number(card.querySelector(".jamii")?.value || existing.jamii || 0);
-            const totalF1 = Number(card.querySelector(".faini1")?.value || existing.faini1 || 0);
-            const totalF2 = Number(card.querySelector(".faini2")?.value || existing.faini2 || 0);
-            const totalF3 = Number(card.querySelector(".faini3")?.value || existing.faini3 || 0);
-            const totalMkopoHisa = Number(card.querySelector(".mkopoHisa")?.value || existing.mkopoHisa || 0);
-            const totalHisaLipwa = Number(card.querySelector(".hisaLipwa")?.value || existing.hisaLipwa || 0);
-            const totalMkopoJamii = Number(card.querySelector(".mkopoJamii")?.value || existing.mkopoJamii || 0);
-            const totalJamiiLipwa = Number(card.querySelector(".jamiiLipwa")?.value || existing.jamiiLipwa || 0);
+            const leoAfya = Number(card.querySelector(".afya")?.value || 0);
+            const leoJamii = Number(card.querySelector(".jamii")?.value || 0);
+            const leoF1 = Number(card.querySelector(".faini1")?.value || 0);
+            const leoF2 = Number(card.querySelector(".faini2")?.value || 0);
+            const leoF3 = Number(card.querySelector(".faini3")?.value || 0);
+            const leoMkopoHisa = Number(card.querySelector(".mkopoHisa")?.value || 0);
+            const leoHisaLipwa = Number(card.querySelector(".hisaLipwa")?.value || 0);
+            const leoMkopoJamii = Number(card.querySelector(".mkopoJamii")?.value || 0);
+            const leoJamiiLipwa = Number(card.querySelector(".jamiiLipwa")?.value || 0);
 
             const { error } = await db.from("members").upsert({
                 id: parseInt(memberId, 10),
@@ -595,24 +591,24 @@ async function saveAllData() {
                 dob,
                 guardian,
                 photo_url: photoUrl,
-                hisa_anzia: totalHisa,
-                afya_leo: totalAfya,
-                jamii_leo: totalJamii,
-                faini_1: totalF1,
-                faini_2: totalF2,
-                faini_3: totalF3,
-                mkopo_hisa_mpya: totalMkopoHisa,
-                hisa_inayolipwa_leo: totalHisaLipwa,
-                mkopo_jamii_mpya: totalMkopoJamii,
-                jamii_inayolipwa_leo: totalJamiiLipwa,
+                hisa_anzia: (existing.hisaAnzia || 0) + leoHisa,
+                afya_leo: (existing.afya || 0) + leoAfya,
+                jamii_leo: (existing.jamii || 0) + leoJamii,
+                faini_1: (existing.faini1 || 0) + leoF1,
+                faini_2: (existing.faini2 || 0) + leoF2,
+                faini_3: (existing.faini3 || 0) + leoF3,
+                mkopo_hisa_mpya: (existing.mkopoHisa || 0) + leoMkopoHisa,
+                hisa_inayolipwa_leo: (existing.hisaLipwa || 0) + leoHisaLipwa,
+                mkopo_jamii_mpya: (existing.mkopoJamii || 0) + leoMkopoJamii,
+                jamii_inayolipwa_leo: (existing.jamiiLipwa || 0) + leoJamiiLipwa,
                 updated_at: new Date().toISOString()
             });
 
             if (!error) saveCount++;
         }
 
-        alert(`Imefanikiwa kuokoa data za wanakikundi ${saveCount} kwenye Supabase!`);
-        await loadMembersFromSupabase(); // Pakua data upya ili kusafisha muonekano
+        alert(`Imefanikiwa kuokoa data zote za wanakikundi ${saveCount} kwenye Supabase!`);
+        await loadMembersFromSupabase(); // Pakua data upya ili kusafisha fomu
     } catch (err) {
         alert("Hitilafu wakati wa kuhifadhi data: " + err.message);
     }
