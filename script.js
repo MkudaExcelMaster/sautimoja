@@ -353,15 +353,25 @@ function updateDashboard() {
     let rawShares = 0, health = 0, rawCommunity = 0, fines = 0;
     let loanShares = 0, sharesPaid = 0, loanCommunity = 0, communityPaid = 0;
 
-    Object.values(membersData).forEach(m => {
-        rawShares += (m.hisaAnzia || 0);
-        health += (m.afya || 0);
-        rawCommunity += (m.jamii || 0);
-        fines += (m.faini1 || 0) + (m.faini2 || 0) + (m.faini3 || 0);
-        loanShares += (m.mkopoHisa || 0);
-        sharesPaid += (m.hisaLipwa || 0);
-        loanCommunity += (m.mkopoJamii || 0);
-        communityPaid += (m.jamiiLipwa || 0);
+    // Kusoma data kutoka kwa kila kadi iliyopo kwenye screen
+    document.querySelectorAll(".member-card").forEach(card => {
+        const memberId = card.getAttribute("data-member");
+        const mData = membersData[memberId] || {};
+
+        const leoHisaWiki = Number(card.querySelector(".hisaWiki")?.value || 0);
+        
+        rawShares += (mData.hisaAnzia || 0) + leoHisaWiki;
+        health += Number(card.querySelector(".afya")?.value || 0);
+        rawCommunity += Number(card.querySelector(".jamii")?.value || 0);
+        
+        fines += Number(card.querySelector(".faini1")?.value || 0) + 
+                 Number(card.querySelector(".faini2")?.value || 0) + 
+                 Number(card.querySelector(".faini3")?.value || 0);
+                 
+        loanShares += Number(card.querySelector(".mkopoHisa")?.value || 0);
+        sharesPaid += Number(card.querySelector(".hisaLipwa")?.value || 0);
+        loanCommunity += Number(card.querySelector(".mkopoJamii")?.value || 0);
+        communityPaid += Number(card.querySelector(".jamiiLipwa")?.value || 0);
     });
 
     const activeShares = (rawShares + sharesPaid) - loanShares;
@@ -431,14 +441,18 @@ function searchMember() {
     });
 }
 
+/* =====================================
+   INITIALIZE APP
+===================================== */
 function initializeApp() {
     createMembersCards();
 
-    // Kuhesabu upya kila kadi wakati wa kuanza
+    // Piga hesabu upya kwa kila kadi mara tu data zinapowekwa
     document.querySelectorAll(".member-card").forEach(card => {
         calculateMember(card);
     });
 
+    // Sasisha dashboard kuu
     updateDashboard();
 }
 
