@@ -1,4 +1,4 @@
-// CND ya Supabase lazima iwe kwenye index.html au uimport Supabase client
+// CDN ya Supabase lazima iwe kwenye index.html au uimport Supabase client
 const SUPABASE_URL = "https://nkdvoqbbzgjdkvvccbej.supabase.co";
 const SUPABASE_KEY = "sb_publishable__6o1FK6fIdXD9st9G8QJ9w_ZLqH6lxC";
 
@@ -7,6 +7,14 @@ const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const membersContainer = document.getElementById("membersContainer");
 let membersData = {};
+let currentUser = null;
+
+// Anzisha kadi mara tu script inapopakiwa
+document.addEventListener("DOMContentLoaded", () => {
+    if (membersContainer) {
+        createMembersCards();
+    }
+});
 
 /* =====================================
    FORMAT NUMBER
@@ -57,8 +65,6 @@ async function loadMembersFromSupabase() {
                 };
             });
             console.log("Data za Supabase zimepakiwa kikamilifu!");
-        } else {
-            console.warn("Hakuna data kwenye Supabase bado.");
         }
 
         initializeApp();
@@ -74,6 +80,7 @@ async function loadMembersFromSupabase() {
    CREATE MEMBERS CARDS (Kujenga Kadi 120)
 ===================================== */
 function createMembersCards() {
+    if (!membersContainer) return;
     membersContainer.innerHTML = "";
     const fragment = document.createDocumentFragment();
 
@@ -83,6 +90,7 @@ function createMembersCards() {
         const card = document.createElement("div");
         card.className = "member-card";
         card.setAttribute("data-member", memberId);
+        card.style.display = "block"; // Hakikisha inaonyeshwa kwa default
 
         const imageSrc = data.photo 
             ? data.photo 
