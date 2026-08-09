@@ -442,7 +442,7 @@ function initializeApp() {
 /* =====================================
    MFUMO WA LOGIN NA UTAMBULISHO (ROLES)
 ===================================== */
-let currentUser = null;
+currentUser = null;
 
 async function handleLogin() {
     const inputUser = document.getElementById("loginUsername").value.trim();
