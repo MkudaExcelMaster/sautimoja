@@ -686,4 +686,21 @@ async function exportExcel() {
     } catch (err) {
         alert("Hitilafu kwenye ku-export Excel: " + err.message);
     }
+}// Unatakiwa kuwa na declaration moja tu ya currentUser
+let currentUser = null; 
+
+// Definition ya handleLogin
+function handleLogin(event) {
+  event.preventDefault();
+  
+  // Kodi yako ya kuingia kwenye mfumo (mfano: kuchukua password na simu)
+  console.log("Inajaribu kuingia...");
 }
+
+// Event listener inayofanya kazi ukurasa ukimaliza kupakiwa
+document.addEventListener('DOMContentLoaded', () => {
+  const loginButton = document.getElementById('loginBtn');
+  if (loginButton) {
+    loginButton.addEventListener('click', handleLogin);
+  }
+});
