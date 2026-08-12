@@ -131,24 +131,19 @@ function createMembersCards() {
                         <p>Deni Lililobaki: <span class="resultDebt">0</span></p>
                     </div>
 
-                    <div class="member-summary">
-  
-    </div>
-</div>
-
                     <h4 style="margin-top:15px; color:#2563EB;">INGIZA DATA ZA LEO / WIKI HII:</h4>
                     <div class="grid">
                         <div><label>Hisa Anzia (Jumla)</label><input type="number" class="hisaAnzia" value="${data.hisaAnzia || 0}" disabled></div>
                         <div><label>Hisa ya Leo (+)</label><input type="number" class="hisaWiki" value="0"></div>
-                        <div><label>Afya (Jumla)</label><input type="number" class="afya" value="${data.afya || 0}"></div>
-                        <div><label>Jamii (Jumla)</label><input type="number" class="jamii" value="${data.jamii || 0}"></div>
-                        <div><label>Faini I (+)</label><input type="number" class="faini1" value="${data.faini1 || 0}"></div>
-                        <div><label>Faini II (+)</label><input type="number" class="faini2" value="${data.faini2 || 0}"></div>
-                        <div><label>Faini III (+)</label><input type="number" class="faini3" value="${data.faini3 || 0}"></div>
-                        <div><label>Mkopo Hisa Mpya (+)</label><input type="number" class="mkopoHisa" value="${data.mkopoHisa || 0}"></div>
-                        <div><label>Hisa Inayolipwa Leo (+)</label><input type="number" class="hisaLipwa" value="${data.hisaLipwa || 0}"></div>
-                        <div><label>Mkopo Jamii Mpya (+)</label><input type="number" class="mkopoJamii" value="${data.mkopoJamii || 0}"></div>
-                        <div><label>Jamii Inayolipwa Leo (+)</label><input type="number" class="jamiiLipwa" value="${data.jamiiLipwa || 0}"></div>
+                        <div><label>Afya ya Leo (+)</label><input type="number" class="afya" value="0"></div>
+                        <div><label>Jamii ya Leo (+)</label><input type="number" class="jamii" value="0"></div>
+                        <div><label>Faini I (+)</label><input type="number" class="faini1" value="0"></div>
+                        <div><label>Faini II (+)</label><input type="number" class="faini2" value="0"></div>
+                        <div><label>Faini III (+)</label><input type="number" class="faini3" value="0"></div>
+                        <div><label>Mkopo Hisa Mpya (+)</label><input type="number" class="mkopoHisa" value="0"></div>
+                        <div><label>Hisa Inayolipwa Leo (+)</label><input type="number" class="hisaLipwa" value="0"></div>
+                        <div><label>Mkopo Jamii Mpya (+)</label><input type="number" class="mkopoJamii" value="0"></div>
+                        <div><label>Jamii Inayolipwa Leo (+)</label><input type="number" class="jamiiLipwa" value="0"></div>
                     </div>
                     <button class="save-member" style="background-color: #10B981; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px; margin-top: 10px; width: 100%;">💾 Funga & Hifadhi Supabase</button>
                 </div>
@@ -235,27 +230,28 @@ async function processTodayData(memberId) {
     };
 
     const leoHisa = Number(card.querySelector(".hisaWiki")?.value || 0);
-    const totalAfya = Number(card.querySelector(".afya")?.value || 0);
-    const totalJamii = Number(card.querySelector(".jamii")?.value || 0);
-    const totalFaini1 = Number(card.querySelector(".faini1")?.value || 0);
-    const totalFaini2 = Number(card.querySelector(".faini2")?.value || 0);
-    const totalFaini3 = Number(card.querySelector(".faini3")?.value || 0);
-    const totalMkopoHisa = Number(card.querySelector(".mkopoHisa")?.value || 0);
-    const totalHisaLipwa = Number(card.querySelector(".hisaLipwa")?.value || 0);
-    const totalMkopoJamii = Number(card.querySelector(".mkopoJamii")?.value || 0);
-    const totalJamiiLipwa = Number(card.querySelector(".jamiiLipwa")?.value || 0);
+    const leoAfya = Number(card.querySelector(".afya")?.value || 0);
+    const leoJamii = Number(card.querySelector(".jamii")?.value || 0);
+    const leoFaini1 = Number(card.querySelector(".faini1")?.value || 0);
+    const leoFaini2 = Number(card.querySelector(".faini2")?.value || 0);
+    const leoFaini3 = Number(card.querySelector(".faini3")?.value || 0);
+    const leoMkopoHisa = Number(card.querySelector(".mkopoHisa")?.value || 0);
+    const leoHisaLipwa = Number(card.querySelector(".hisaLipwa")?.value || 0);
+    const leoMkopoJamii = Number(card.querySelector(".mkopoJamii")?.value || 0);
+    const leoJamiiLipwa = Number(card.querySelector(".jamiiLipwa")?.value || 0);
 
+    // Kujumlisha data za leo kwenye jumla ya kudumu (Akumulative)
     const updatedDataLocal = {
         hisaAnzia: (existing.hisaAnzia || 0) + leoHisa,
-        afya: totalAfya,
-        jamii: totalJamii,
-        faini1: totalFaini1,
-        faini2: totalFaini2,
-        faini3: totalFaini3,
-        mkopoHisa: totalMkopoHisa,
-        hisaLipwa: totalHisaLipwa,
-        mkopoJamii: totalMkopoJamii,
-        jamiiLipwa: totalJamiiLipwa
+        afya: (existing.afya || 0) + leoAfya,
+        jamii: (existing.jamii || 0) + leoJamii,
+        faini1: (existing.faini1 || 0) + leoFaini1,
+        faini2: (existing.faini2 || 0) + leoFaini2,
+        faini3: (existing.faini3 || 0) + leoFaini3,
+        mkopoHisa: (existing.mkopoHisa || 0) + leoMkopoHisa,
+        hisaLipwa: (existing.hisaLipwa || 0) + leoHisaLipwa,
+        mkopoJamii: (existing.mkopoJamii || 0) + leoMkopoJamii,
+        jamiiLipwa: (existing.jamiiLipwa || 0) + leoJamiiLipwa
     };
 
     const dobValue = card.querySelector(".member-birthdate").value;
@@ -299,8 +295,18 @@ async function processTodayData(memberId) {
         mrithi: payloadSupabase.guardian
     };
 
+    // Weka Input Fields zote kuwa 0 baada ya Kuhifadhi
     card.querySelector(".hisaAnzia").value = membersData[memberId].hisaAnzia;
     card.querySelector(".hisaWiki").value = 0;
+    card.querySelector(".afya").value = 0;
+    card.querySelector(".jamii").value = 0;
+    card.querySelector(".faini1").value = 0;
+    card.querySelector(".faini2").value = 0;
+    card.querySelector(".faini3").value = 0;
+    card.querySelector(".mkopoHisa").value = 0;
+    card.querySelector(".hisaLipwa").value = 0;
+    card.querySelector(".mkopoJamii").value = 0;
+    card.querySelector(".jamiiLipwa").value = 0;
 
     calculateMember(card);
     updateDashboard();
@@ -316,16 +322,26 @@ function calculateMember(card) {
     const mData = membersData[memberId] || {};
 
     const leoHisaWiki = Number(card.querySelector(".hisaWiki")?.value || 0);
+    const leoAfya = Number(card.querySelector(".afya")?.value || 0);
+    const leoJamii = Number(card.querySelector(".jamii")?.value || 0);
+    const leoF1 = Number(card.querySelector(".faini1")?.value || 0);
+    const leoF2 = Number(card.querySelector(".faini2")?.value || 0);
+    const leoF3 = Number(card.querySelector(".faini3")?.value || 0);
+    const leoMkopoHisa = Number(card.querySelector(".mkopoHisa")?.value || 0);
+    const leoHisaLipwa = Number(card.querySelector(".hisaLipwa")?.value || 0);
+    const leoMkopoJamii = Number(card.querySelector(".mkopoJamii")?.value || 0);
+    const leoJamiiLipwa = Number(card.querySelector(".jamiiLipwa")?.value || 0);
+
+    // Kuchukua data za hifadhi + data zilizoingizwa hivi karibuni kwenya inputs
     const totalShares = (mData.hisaAnzia || 0) + leoHisaWiki;
+    const totalHealth = (mData.afya || 0) + leoAfya;
+    const totalCommunity = (mData.jamii || 0) + leoJamii;
+    const totalFines = (mData.faini1 || 0) + (mData.faini2 || 0) + (mData.faini3 || 0) + leoF1 + leoF2 + leoF3;
     
-    const totalHealth = Number(card.querySelector(".afya")?.value || 0);
-    const totalCommunity = Number(card.querySelector(".jamii")?.value || 0);
-    const totalFines = Number(card.querySelector(".faini1")?.value || 0) + Number(card.querySelector(".faini2")?.value || 0) + Number(card.querySelector(".faini3")?.value || 0);
-    
-    const mkopoHisaVal = Number(card.querySelector(".mkopoHisa")?.value || 0);
-    const hisaLipwaVal = Number(card.querySelector(".hisaLipwa")?.value || 0);
-    const mkopoJamiiVal = Number(card.querySelector(".mkopoJamii")?.value || 0);
-    const jamiiLipwaVal = Number(card.querySelector(".jamiiLipwa")?.value || 0);
+    const mkopoHisaVal = (mData.mkopoHisa || 0) + leoMkopoHisa;
+    const hisaLipwaVal = (mData.hisaLipwa || 0) + leoHisaLipwa;
+    const mkopoJamiiVal = (mData.mkopoJamii || 0) + leoMkopoJamii;
+    const jamiiLipwaVal = (mData.jamiiLipwa || 0) + leoJamiiLipwa;
 
     const debtShares = mkopoHisaVal - hisaLipwaVal;
     const debtCommunity = mkopoJamiiVal - jamiiLipwaVal;
@@ -357,24 +373,31 @@ function updateDashboard() {
     let rawShares = 0, health = 0, rawCommunity = 0, fines = 0;
     let loanShares = 0, sharesPaid = 0, loanCommunity = 0, communityPaid = 0;
 
-    document.querySelectorAll(".member-card").forEach(card => {
-        const memberId = card.getAttribute("data-member");
+    Object.keys(membersData).forEach(memberId => {
         const mData = membersData[memberId] || {};
+        const card = document.querySelector(`[data-member="${memberId}"]`);
 
-        const leoHisaWiki = Number(card.querySelector(".hisaWiki")?.value || 0);
+        const leoHisaWiki = card ? Number(card.querySelector(".hisaWiki")?.value || 0) : 0;
+        const leoAfya = card ? Number(card.querySelector(".afya")?.value || 0) : 0;
+        const leoJamii = card ? Number(card.querySelector(".jamii")?.value || 0) : 0;
+        const leoF1 = card ? Number(card.querySelector(".faini1")?.value || 0) : 0;
+        const leoF2 = card ? Number(card.querySelector(".faini2")?.value || 0) : 0;
+        const leoF3 = card ? Number(card.querySelector(".faini3")?.value || 0) : 0;
+        const leoMkopoHisa = card ? Number(card.querySelector(".mkopoHisa")?.value || 0) : 0;
+        const leoHisaLipwa = card ? Number(card.querySelector(".hisaLipwa")?.value || 0) : 0;
+        const leoMkopoJamii = card ? Number(card.querySelector(".mkopoJamii")?.value || 0) : 0;
+        const leoJamiiLipwa = card ? Number(card.querySelector(".jamiiLipwa")?.value || 0) : 0;
         
         rawShares += (mData.hisaAnzia || 0) + leoHisaWiki;
-        health += Number(card.querySelector(".afya")?.value || 0);
-        rawCommunity += Number(card.querySelector(".jamii")?.value || 0);
+        health += (mData.afya || 0) + leoAfya;
+        rawCommunity += (mData.jamii || 0) + leoJamii;
         
-        fines += Number(card.querySelector(".faini1")?.value || 0) + 
-                 Number(card.querySelector(".faini2")?.value || 0) + 
-                 Number(card.querySelector(".faini3")?.value || 0);
+        fines += (mData.faini1 || 0) + (mData.faini2 || 0) + (mData.faini3 || 0) + leoF1 + leoF2 + leoF3;
                  
-        loanShares += Number(card.querySelector(".mkopoHisa")?.value || 0);
-        sharesPaid += Number(card.querySelector(".hisaLipwa")?.value || 0);
-        loanCommunity += Number(card.querySelector(".mkopoJamii")?.value || 0);
-        communityPaid += Number(card.querySelector(".jamiiLipwa")?.value || 0);
+        loanShares += (mData.mkopoHisa || 0) + leoMkopoHisa;
+        sharesPaid += (mData.hisaLipwa || 0) + leoHisaLipwa;
+        loanCommunity += (mData.mkopoJamii || 0) + leoMkopoJamii;
+        communityPaid += (mData.jamiiLipwa || 0) + leoJamiiLipwa;
     });
 
     const activeShares = (rawShares + sharesPaid) - loanShares;
@@ -580,6 +603,28 @@ async function saveAllData() {
             const photoUrl = card.querySelector(`#photo-${memberId}`)?.src || existing.photo || "";
 
             const leoHisa = Number(card.querySelector(".hisaWiki")?.value || 0);
+            const leoAfya = Number(card.querySelector(".afya")?.value || 0);
+            const leoJamii = Number(card.querySelector(".jamii")?.value || 0);
+            const leoF1 = Number(card.querySelector(".faini1")?.value || 0);
+            const leoF2 = Number(card.querySelector(".faini2")?.value || 0);
+            const leoF3 = Number(card.querySelector(".faini3")?.value || 0);
+            const leoMkopoHisa = Number(card.querySelector(".mkopoHisa")?.value || 0);
+            const leoHisaLipwa = Number(card.querySelector(".hisaLipwa")?.value || 0);
+            const leoMkopoJamii = Number(card.querySelector(".mkopoJamii")?.value || 0);
+            const leoJamiiLipwa = Number(card.querySelector(".jamiiLipwa")?.value || 0);
+
+            const updatedDataLocal = {
+                hisaAnzia: (existing.hisaAnzia || 0) + leoHisa,
+                afya: (existing.afya || 0) + leoAfya,
+                jamii: (existing.jamii || 0) + leoJamii,
+                faini1: (existing.faini1 || 0) + leoF1,
+                faini2: (existing.faini2 || 0) + leoF2,
+                faini3: (existing.faini3 || 0) + leoF3,
+                mkopoHisa: (existing.mkopoHisa || 0) + leoMkopoHisa,
+                hisaLipwa: (existing.hisaLipwa || 0) + leoHisaLipwa,
+                mkopoJamii: (existing.mkopoJamii || 0) + leoMkopoJamii,
+                jamiiLipwa: (existing.jamiiLipwa || 0) + leoJamiiLipwa
+            };
 
             const { error } = await db.from("members").upsert({
                 id: parseInt(memberId, 10),
@@ -589,16 +634,16 @@ async function saveAllData() {
                 dob,
                 guardian,
                 photo_url: photoUrl,
-                hisa_anzia: (existing.hisaAnzia || 0) + leoHisa,
-                afya_leo: Number(card.querySelector(".afya")?.value || 0),
-                jamii_leo: Number(card.querySelector(".jamii")?.value || 0),
-                faini_1: Number(card.querySelector(".faini1")?.value || 0),
-                faini_2: Number(card.querySelector(".faini2")?.value || 0),
-                faini_3: Number(card.querySelector(".faini3")?.value || 0),
-                mkopo_hisa_mpya: Number(card.querySelector(".mkopoHisa")?.value || 0),
-                hisa_inayolipwa_leo: Number(card.querySelector(".hisaLipwa")?.value || 0),
-                mkopo_jamii_mpya: Number(card.querySelector(".mkopoJamii")?.value || 0),
-                jamii_inayolipwa_leo: Number(card.querySelector(".jamiiLipwa")?.value || 0),
+                hisa_anzia: updatedDataLocal.hisaAnzia,
+                afya_leo: updatedDataLocal.afya,
+                jamii_leo: updatedDataLocal.jamii,
+                faini_1: updatedDataLocal.faini1,
+                faini_2: updatedDataLocal.faini2,
+                faini_3: updatedDataLocal.faini3,
+                mkopo_hisa_mpya: updatedDataLocal.mkopoHisa,
+                hisa_inayolipwa_leo: updatedDataLocal.hisaLipwa,
+                mkopo_jamii_mpya: updatedDataLocal.mkopoJamii,
+                jamii_inayolipwa_leo: updatedDataLocal.jamiiLipwa,
                 updated_at: new Date().toISOString()
             });
 
@@ -642,34 +687,21 @@ async function exportExcel() {
 
         document.querySelectorAll(".member-card").forEach(card => {
             const memberId = card.getAttribute("data-member");
-            const name = card.querySelector(".member-name")?.value || "";
-            const phone = card.querySelector(".member-phone")?.value || "";
-            const gender = card.querySelector(".member-gender")?.value || "";
-
-            const hisaAnzia = Number(card.querySelector(".hisaAnzia")?.value || 0);
-            const afya = Number(card.querySelector(".afya")?.value || 0);
-            const jamii = Number(card.querySelector(".jamii")?.value || 0);
-            const f1 = Number(card.querySelector(".faini1")?.value || 0);
-            const f2 = Number(card.querySelector(".faini2")?.value || 0);
-            const f3 = Number(card.querySelector(".faini3")?.value || 0);
-            const mkopoHisa = Number(card.querySelector(".mkopoHisa")?.value || 0);
-            const hisaLipwa = Number(card.querySelector(".hisaLipwa")?.value || 0);
-            const mkopoJamii = Number(card.querySelector(".mkopoJamii")?.value || 0);
-            const jamiiLipwa = Number(card.querySelector(".jamiiLipwa")?.value || 0);
+            const mData = membersData[memberId] || {};
 
             worksheet.addRow({
                 id: memberId,
-                name: name,
-                phone: phone,
-                gender: gender,
-                hisa_anzia: hisaAnzia,
-                afya_leo: afya,
-                jamii_leo: jamii,
-                faini_total: f1 + f2 + f3,
-                mkopo_hisa: mkopoHisa,
-                hisa_lipwa: hisaLipwa,
-                mkopo_jamii: mkopoJamii,
-                jamii_lipwa: jamiiLipwa
+                name: mData.name || "",
+                phone: mData.phone || "",
+                gender: mData.gender || "",
+                hisa_anzia: mData.hisaAnzia || 0,
+                afya_leo: mData.afya || 0,
+                jamii_leo: mData.jamii || 0,
+                faini_total: (mData.faini1 || 0) + (mData.faini2 || 0) + (mData.faini3 || 0),
+                mkopo_hisa: mData.mkopoHisa || 0,
+                hisa_lipwa: mData.hisaLipwa || 0,
+                mkopo_jamii: mData.mkopoJamii || 0,
+                jamii_lipwa: mData.jamiiLipwa || 0
             });
         });
 
